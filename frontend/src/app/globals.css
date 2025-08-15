@@ -1,6 +1,60 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+[contenteditable="true"] {
+  outline: none !important;
+  border: none !important;
+}
+
+/* BlockNote styles */
+.bn-container {
+  height: 100vh !important;
+  min-height: 100vh !important;
+}
+
+.bn-editor {
+  height: 100% !important;
+  min-height: 100vh !important;
+}
+
+.mantine-ScrollArea-root {
+  height: 100% !important;
+}
+
+.mantine-ScrollArea-viewport {
+  height: 100% !important;
+}
+
+/* Add these specific rules for BlockNote dotted borders */
+.bn-block {
+  outline: none !important;
+  border: none !important;
+}
+
+.bn-inline-content {
+  outline: none !important;
+  border: none !important;
+}
+
+/* Remove dotted borders from all BlockNote elements */
+[data-slot="block"] {
+  outline: none !important;
+  border: none !important;
+}
+
+/* Specific fix for page break blocks */
+[data-block-type="pageBreak"] {
+  outline: none !important;
+  border: none !important;
+}
+
+/* Remove focus outlines */
+.bn-block:focus,
+.bn-inline-content:focus {
+  outline: none !important;
+  border: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -120,3 +174,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+
