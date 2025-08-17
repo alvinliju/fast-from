@@ -240,7 +240,7 @@ const multipleChoiceBlock = createReactBlockSpec(
     content: "none",
     propSchema: {
       question: { default: "Type your question here" },
-      options: { default: ["Option 1", "Option 2"] },
+      options: { default: "Option 1,Option 2,Option 3" },
       required: { default: false },
     },
   },
@@ -249,6 +249,10 @@ const multipleChoiceBlock = createReactBlockSpec(
       const [options, setOptions] = useState(
         props.block.props.options || ["Option 1", "Option 2"]
       );
+
+      const optionsArray = typeof props.block.props.options === 'string' 
+      ? props.block.props.options.split(',').map(opt => opt.trim())
+      : props.block.props.options || [];
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -279,7 +283,7 @@ const multipleChoiceBlock = createReactBlockSpec(
               placeholder="Type your question here..."
             />
             <div className="space-y-2 max-w-sm">
-              {options.map((option, index) => (
+            {optionsArray.map((option:any, index:number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
                     type="radio"
@@ -321,7 +325,7 @@ const checkboxBlock = createReactBlockSpec(
     content: "none",
     propSchema: {
       question: { default: "Type your question here" },
-      options: { default: ["Option 1", "Option 2"] },
+      options: { default: "Option 1,Option 2,Option 3" },
       required: { default: false },
     },
   },
@@ -330,6 +334,10 @@ const checkboxBlock = createReactBlockSpec(
       const [options, setOptions] = useState(
         props.block.props.options || ["Option 1", "Option 2"]
       );
+
+      const optionsArray = typeof props.block.props.options === 'string' 
+      ? props.block.props.options.split(',').map(opt => opt.trim())
+      : props.block.props.options || [];
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -360,7 +368,7 @@ const checkboxBlock = createReactBlockSpec(
               placeholder="Type your question here..."
             />
             <div className="space-y-2 max-w-sm">
-              {options.map((option, index) => (
+              {optionsArray.map((option:any, index:number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input type="checkbox" disabled className="w-4 h-4" />
                   <input
@@ -413,7 +421,7 @@ const getCustomSlashMenuItems = (
   // Page Controls
   {
     title: "Page Break",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "pageBreak" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "pageBreak" } as any),
     aliases: ["page", "break"],
     group: "Page Controls",
     icon: <Divide size={18} />,
@@ -422,42 +430,42 @@ const getCustomSlashMenuItems = (
   // Basic Questions
   {
     title: "Short Text",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "shortText" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "shortText" } as any),
     aliases: ["text", "short"],
     group: "Basic Questions",
     icon: <Type size={18} />,
   },
   {
     title: "Long Text",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "longText" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "longText" } as any),
     aliases: ["textarea", "long"],
     group: "Basic Questions",
     icon: <AlignLeft size={18} />,
   },
   {
     title: "Email",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "email" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "email" } as any),
     aliases: ["email", "mail"],
     group: "Basic Questions",
     icon: <Mail size={18} />,
   },
   {
     title: "Number",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "number" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "number" } as any),
     aliases: ["number", "num"],
     group: "Basic Questions",
     icon: <Hash size={18} />,
   },
   {
     title: "Multiple Choice",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "multipleChoice" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "multipleChoice" } as any),
     aliases: ["choice", "radio"],
     group: "Advanced Questions",
     icon: <Circle size={18} />,
   },
   {
     title: "Checkbox",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "checkbox" }),
+    onItemClick: () => insertOrUpdateBlock(editor, { type: "checkbox" } as any),
     aliases: ["checkbox", "check"],
     group: "Advanced Questions",
     icon: <Square size={18} />,
@@ -468,13 +476,28 @@ const getCustomSlashMenuItems = (
 const parseFormByPages = (editor: any) => {
   const blocks = editor.document;
   const pages = [];
-  let currentPage = [];
+  let currentPage:any = [];
 
-  blocks.forEach((block) => {
+  blocks.forEach((block:any) => {
     if (block.type === "pageBreak") {
       if (currentPage.length > 0) {
-        pages.push(currentPage);
+        //count number of pages and create an object with all shit inisde the page break
+        const pageNumber = pages.length + 1;
+        pages.push({
+            id: `page-${pageNumber}`,
+            type: "pageBreak",
+            content: currentPage,
+            props: {}
+        });
         currentPage = [];
+      }else {
+        const pageNumber = pages.length + 1;
+        pages.push({
+            id: `page-${pageNumber}`,
+            type: "pageBreak",
+            content: [],
+            props: {}
+        });
       }
     } else if (
       [
@@ -490,31 +513,24 @@ const parseFormByPages = (editor: any) => {
     }
   });
 
-  if (currentPage.length > 0) pages.push(currentPage);
+  if (currentPage.length > 0){
+    const pageNumber = pages.length + 1;
+    pages.push({
+      id: `page-${pageNumber}`,
+      type: "pageBreak",
+      content: currentPage, 
+      props: {}
+    });
+  }
   return pages;
 };
 
 const exportFormv2 = (editor:any) => {
-    const blocks = editor.document;
-    const formData = {
-        title:"Form Title",
-        blocks:blocks.map((block:any) => ({
-            id:block.id,
-            type:block.type,
-            content:block.content,
-            props:block.props,
-
-        }))
-    }
-
-    console.log("Form Data:",formData);
-    console.log("Raw Blocks:", blocks);
-
     const pages = parseFormByPages(editor);
-    console.log("Raw Pages:", pages)
-
-    alert(`Form exported! Check console for data. Found ${blocks.length} blocks.`);
+    console.log("Form Pages:", pages);
+    alert(`Form has ${pages.length} pages. Check console for structure.`);
 }
+
 export default function FormBuilder() {
   const [isPreview, setIsPreview] = useState(false);
   const [formData, setFormData] = useState<any>(null);
@@ -618,6 +634,7 @@ export default function FormBuilder() {
           <SuggestionMenuController
             triggerCharacter="/"
             getItems={async (query) =>
+                //@ts-ignore
               filterSuggestionItems(getCustomSlashMenuItems(editor), query)
             }
           />
