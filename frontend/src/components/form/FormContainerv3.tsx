@@ -6,6 +6,7 @@ import { div } from "motion/react-client";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import RotatingCompleteButton from "./SubmitButton";
+import { useEffect } from "react";
 
 //create a simple dummy questions according to our shit from question.ts
 const sampleQuestions = [
@@ -66,6 +67,28 @@ export default function FormContainer() {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleNext();
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handleBack();
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleNext();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [currentPage, isSubmitted]);
+
   const handleChange = (questionId: string, value: string) => {
     setFormData((prev) => ({ ...prev, [questionId]: value }));
   };
@@ -96,7 +119,7 @@ export default function FormContainer() {
         <div className="min-h-screen grid grid-rows-[auto_1fr_auto] p-8">
           {/* we need the progress bar first */}
 
-          <div className="mb-8">
+          <div className="mb-4 md:mb-8">
             <ProgressBar current={currentPage} total={sampleQuestions.length} />
           </div>
           {/* we need the question */}
@@ -112,13 +135,15 @@ export default function FormContainer() {
             </AnimationWrapper>
           </div>
 
-          <Navigation
-            onBack={handleBack}
-            onNext={handleNext}
-            showBack={currentPage > 0}
-            showNext={true}
-            isLast={currentPage === sampleQuestions.length - 1}
-          />
+          <div className="md:pt-8">
+            <Navigation
+              onBack={handleBack}
+              onNext={handleNext}
+              showBack={currentPage > 0}
+              showNext={true}
+              isLast={currentPage === sampleQuestions.length - 1}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -377,13 +402,14 @@ const Navigation = ({
       <span>Back</span>
     </Button>
 
-{isLast ? <RotatingCompleteButton onClick={()=>onNext()}/> : (
-    <Button onClick={onNext}>
-      <span>{isLast ? "Submit" : "Continue"}</span>
-      <ArrowRight className="w-4 h-4" />
-    </Button>
-)}
-    
+    {isLast ? (
+      <RotatingCompleteButton onClick={() => onNext()} />
+    ) : (
+      <Button onClick={onNext}>
+        <span>{isLast ? "Submit" : "Continue"}</span>
+        <ArrowRight className="w-4 h-4" />
+      </Button>
+    )}
   </div>
 );
 
