@@ -93,6 +93,23 @@ export default function FormContainer() {
     setFormData((prev) => ({ ...prev, [questionId]: value }));
   };
 
+  // Fix the form submission in FormContainer.tsx
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`/api/responses/${formId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
+  };
+
   const handleNext = () => {
     if (currentPage === sampleQuestions.length - 1) {
       setIsSubmitted(true);

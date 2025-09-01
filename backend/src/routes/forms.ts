@@ -1,84 +1,157 @@
 import express from 'express';
-import { createClient } from '@supabase/supabase-js';
-import { authMiddleware } from '../middleware/authMiddleware.ts';   
-import type { Form as FormType } from '../types/index';
-import type { Request, Response } from 'express';
+import { supabase } from '../lib/supbase.js';
+import { requireAuth, type AuthenticatedRequest } from '../middleware/clerkAuth.js';
+import type { Response } from 'express';
 
 const router = express.Router();
-const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
-//create a form 
-router.post('/', authMiddleware, async(req:Request, res:Response) => {
-    try{
-        const { title, description, isPublic } = req.body;
-    const userSubmittedForm: FormType = {
-        user_id: req.user?.id,
-        title,
-        description,
-        content: {},
-        isPublic,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-    }
-    const {data, error} = await supabase.from('forms').insert({ userSubmittedForm })
+interface Form {
+  id?: string;
+  user_id: string;
+  title: string;
+  description?: string;
+  content: any;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-    if (error){
-        throw error;
-    }
-    res.status(201).json(data);
-    }catch(error){
-        res.status(500).json({error: 'Failed to create form'});
+// Create a form 
+router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { title, description, isPublic, content } = req.body;
+    
+    console.log('Creating form with data:', { title, description, isPublic, content });
+    
+    const formData: Omit<Form, 'id'> = {
+      user_id: req.auth!.userId,
+      title,
+      description: description || '',
+      content: content,
+      is_public: isPublic || false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('forms')
+      .insert(formData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(400).json({ error: error.message });
     }
     
-})
+    console.log('Form created successfully:', data);
+    res.status(201).json(data);
+  } catch (error) {
+    console.error('Create form error:', error);
+    res.status(500).json({ error: 'Failed to create form' });
+  }
+});
 
-//edit a form by id
-router.put('/:id', authMiddleware, async(req, res)=>{
-    try{
-        const {id} = req.params;
-        const {title, description, isPublic} = req.body;
-        const {data, error} = await supabase.from('forms').update({title, description, isPublic}).eq('id', id).eq('user_id', req.user?.id);
-        if (error) throw error;
-        res.json(data);
-    }catch(error){
-        res.status(500).json({error: 'Failed to edit form'});
+// Get all forms for user
+router.get('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { data, error } = await supabase
+      .from('forms')
+      .select('*')
+      .eq('user_id', req.auth!.userId)
+      .order('created_at', { ascending: false });
+        
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(400).json({ error: error.message });
     }
-})
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Get forms error:', error);
+    res.status(500).json({ error: 'Failed to get forms' });
+  }
+});
 
-router.delete('/:id', authMiddleware, async(req, res)=>{
-    try{
-        const {id} = req.params;
-        const {data, error} = await supabase.from('forms').delete().eq('id', id).eq('user_id', req.user?.id);
-        if (error) throw error;
-        res.json(data);
-    }catch(error){
-        res.status(500).json({error: 'Failed to delete form'});
+// Get a public form (no auth required)
+router.get('/:id', async (req: express.Request, res: Response) => {
+  try {
+    const { data, error } = await supabase
+      .from('forms')
+      .select('*')
+      .eq('id', req.params.id)
+      .eq('is_public', true)
+      .single();
+        
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(404).json({ error: 'Form not found or not public' });
     }
-})
 
-//get all forms according to user
-router.get('/', authMiddleware, async(req, res)=>{
-try{
-    const {data, error} = await supabase.from('forms').select('*').eq('user_id', req.user?.id);
-    if (error) throw error
-    res.json(data)
-}catch(error){
-    res.status(500).json({error: 'Failed to get forms'});
-}
-})
+    console.log(data)
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Get public form error:', error);
+    res.status(404).json({ error: 'Form not found or not public' });
+  }
+});
 
-//get a public form
-router.get('/:id', async(req, res)=>{
-    try{
-        const {data, error} = await supabase.from('forms').select('*').eq('id', req.params.id).eq('is_published', true).single()
-        if (error) throw error
-        res.json(data)
-
-    }catch(error){
-        res.status(404).json({error:'Form not found or not public'})
+// Update form
+router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description, isPublic, content } = req.body;
+    
+    const updateData = {
+      title,
+      description,
+      is_public: isPublic,
+      content,
+      updated_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('forms')
+      .update(updateData)
+      .eq('id', id)
+      .eq('user_id', req.auth!.userId)
+      .select()
+      .single();
+        
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(400).json({ error: error.message });
     }
-})
-export default router
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Update form error:', error);
+    res.status(500).json({ error: 'Failed to edit form' });
+  }
+});
+
+// Delete form
+router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('forms')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', req.auth!.userId)
+      .select();
+        
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+    
+    res.json({ message: 'Form deleted successfully', data });
+  } catch (error) {
+    console.error('Delete form error:', error);
+    res.status(500).json({ error: 'Failed to delete form' });
+  }
+});
+
+export default router;

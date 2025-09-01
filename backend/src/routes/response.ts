@@ -1,17 +1,12 @@
 import express from 'express';
-import { createClient } from '@supabase/supabase-js';
-import { authMiddleware } from '../middleware/authMiddleware.ts';
-import type { Response as ResponseType } from '../types/index.ts';
+import { supabase } from '../lib/supbase.js';
+import { requireAuth, type AuthenticatedRequest } from '../middleware/clerkAuth.js';
+import type { Response as ResponseType } from '../types/index.js';
 
 const router = express.Router();
 
-const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 //sumit a response
-router.post('/:id', authMiddleware, async(req, res)=>{
+router.post('/:id', async(req, res)=>{
     try{
         const {id} = req.params;
         const userResponse: ResponseType = {
@@ -28,7 +23,7 @@ router.post('/:id', authMiddleware, async(req, res)=>{
 })
 
 //get all responses according to form id
-router.get('/:id', authMiddleware, async(req, res)=>{
+router.get('/:id', requireAuth, async(req, res)=>{
     try{
         const {id} = req.params;
         const {data, error} = await supabase.from('responses').select('*').eq('form_id', id)
@@ -39,8 +34,8 @@ router.get('/:id', authMiddleware, async(req, res)=>{
     }
 })
 
-//get a response by response id
-router.get('/response/:id', authMiddleware, async(req, res)=>{
+//get a specific response
+router.get('/response/:id', requireAuth, async(req, res)=>{
     try{
         const {id} = req.params;
         const {data, error} = await supabase.from('responses').select('*').eq('id', id).single()

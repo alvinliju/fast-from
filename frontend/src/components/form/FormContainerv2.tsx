@@ -1,4 +1,4 @@
-
+//@ts-nocheck
 "use client";
 
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";

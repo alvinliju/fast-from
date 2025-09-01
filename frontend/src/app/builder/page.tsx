@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@clerk/nextjs";
 import {
   BlockNoteEditor,
   defaultBlockSpecs,
@@ -32,6 +33,42 @@ import {
 } from "lucide-react";
 import { div } from "motion/react-client";
 import { Button } from "@/components/ui/button";
+
+const formTitleBlock = createReactBlockSpec(
+  {
+    type:"formTitle",
+    content:"none",
+    propSchema:{
+      title:{default:"Untitled Form"}
+    }
+  },
+  {
+    render:(props)=>{
+      const updateTitle = (newTitle: string) => {
+        props.editor.updateBlock(props.block, {
+          props: { ...props.block.props, title: newTitle },
+        });
+      };
+
+      return (
+        <div className="w-full py-6 border-b border-gray-100 mb-4">
+          <div className="max-w-2xl">
+            <input
+              type="text"
+              value={props.block.props.title}
+              onChange={(e) => updateTitle(e.target.value)}
+              className="text-3xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 placeholder-gray-400 w-full mb-2"
+              placeholder="Form Title"
+            />
+
+          </div>
+        </div>
+      );
+
+      
+    }
+  }
+)
 
 // PAGE BREAK BLOCK
 const pageBreakBlock = createReactBlockSpec(
@@ -250,9 +287,10 @@ const multipleChoiceBlock = createReactBlockSpec(
         props.block.props.options || ["Option 1", "Option 2"]
       );
 
-      const optionsArray = typeof props.block.props.options === 'string' 
-      ? props.block.props.options.split(',').map(opt => opt.trim())
-      : props.block.props.options || [];
+      const optionsArray =
+        typeof props.block.props.options === "string"
+          ? props.block.props.options.split(",").map((opt) => opt.trim())
+          : props.block.props.options || [];
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -283,7 +321,7 @@ const multipleChoiceBlock = createReactBlockSpec(
               placeholder="Type your question here..."
             />
             <div className="space-y-2 max-w-sm">
-            {optionsArray.map((option:any, index:number) => (
+              {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
                     type="radio"
@@ -335,9 +373,10 @@ const checkboxBlock = createReactBlockSpec(
         props.block.props.options || ["Option 1", "Option 2"]
       );
 
-      const optionsArray = typeof props.block.props.options === 'string' 
-      ? props.block.props.options.split(',').map(opt => opt.trim())
-      : props.block.props.options || [];
+      const optionsArray =
+        typeof props.block.props.options === "string"
+          ? props.block.props.options.split(",").map((opt) => opt.trim())
+          : props.block.props.options || [];
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -368,7 +407,7 @@ const checkboxBlock = createReactBlockSpec(
               placeholder="Type your question here..."
             />
             <div className="space-y-2 max-w-sm">
-              {optionsArray.map((option:any, index:number) => (
+              {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input type="checkbox" disabled className="w-4 h-4" />
                   <input
@@ -402,6 +441,7 @@ const checkboxBlock = createReactBlockSpec(
 const mySchema = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
+    formTitle: formTitleBlock,
     pageBreak: pageBreakBlock,
     shortText: shortTextBlock,
     longText: longTextBlock,
@@ -418,10 +458,20 @@ const getCustomSlashMenuItems = (
 ): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
 
+  {
+    title: "Form Title",
+    onItemClick: () =>
+      insertOrUpdateBlock(editor, { type: "formTitle" } as any),
+    aliases: ["title", "header", "form"],
+    group: "Form Structure",
+    icon: <Type size={18} />,
+  },
+
   // Page Controls
   {
     title: "Page Break",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "pageBreak" } as any),
+    onItemClick: () =>
+      insertOrUpdateBlock(editor, { type: "pageBreak" } as any),
     aliases: ["page", "break"],
     group: "Page Controls",
     icon: <Divide size={18} />,
@@ -430,7 +480,8 @@ const getCustomSlashMenuItems = (
   // Basic Questions
   {
     title: "Short Text",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "shortText" } as any),
+    onItemClick: () =>
+      insertOrUpdateBlock(editor, { type: "shortText" } as any),
     aliases: ["text", "short"],
     group: "Basic Questions",
     icon: <Type size={18} />,
@@ -458,7 +509,8 @@ const getCustomSlashMenuItems = (
   },
   {
     title: "Multiple Choice",
-    onItemClick: () => insertOrUpdateBlock(editor, { type: "multipleChoice" } as any),
+    onItemClick: () =>
+      insertOrUpdateBlock(editor, { type: "multipleChoice" } as any),
     aliases: ["choice", "radio"],
     group: "Advanced Questions",
     icon: <Circle size={18} />,
@@ -476,27 +528,37 @@ const getCustomSlashMenuItems = (
 const parseFormByPages = (editor: any) => {
   const blocks = editor.document;
   const pages = [];
-  let currentPage:any = [];
+  let currentPage: any = [];
+  let formMetadata = {
+    title: "Untitled Form",
+    description: ""
+  };
 
-  blocks.forEach((block:any) => {
-    if (block.type === "pageBreak") {
+  blocks.forEach((block: any) => {
+    if (block.type === "formTitle") {
+      // Extract form metadata
+      formMetadata = {
+        title: block.props.title || "Untitled Form",
+        description: block.props.description || ""
+      };
+    } else if (block.type === "pageBreak") {
       if (currentPage.length > 0) {
         //count number of pages and create an object with all shit inisde the page break
         const pageNumber = pages.length + 1;
         pages.push({
-            id: `page-${pageNumber}`,
-            type: "pageBreak",
-            content: currentPage,
-            props: {}
+          id: `page-${pageNumber}`,
+          type: "pageBreak",
+          content: currentPage,
+          props: {},
         });
         currentPage = [];
-      }else {
+      } else {
         const pageNumber = pages.length + 1;
         pages.push({
-            id: `page-${pageNumber}`,
-            type: "pageBreak",
-            content: [],
-            props: {}
+          id: `page-${pageNumber}`,
+          type: "pageBreak",
+          content: [],
+          props: {},
         });
       }
     } else if (
@@ -513,32 +575,40 @@ const parseFormByPages = (editor: any) => {
     }
   });
 
-  if (currentPage.length > 0){
+  if (currentPage.length > 0) {
     const pageNumber = pages.length + 1;
     pages.push({
       id: `page-${pageNumber}`,
       type: "pageBreak",
-      content: currentPage, 
-      props: {}
+      content: currentPage,
+      props: {},
     });
   }
-  return pages;
+  return {
+    metadata:formMetadata,
+    pages
+  };
 };
 
-const exportFormv2 = (editor:any) => {
-    const pages = parseFormByPages(editor);
-    console.log("Form Pages:", pages);
-    alert(`Form has ${pages.length} pages. Check console for structure.`);
-}
+const exportFormv2 = (editor: any) => {
+  const pages = parseFormByPages(editor);
+  console.log("Form Pages:", pages);
+  alert(`Form has ${pages.length} pages. Check console for structure.`);
+};
 
-export default function FormBuilder() {
+export default function FormBuilder({ formId, initialContent, formMetadata }: { 
+  formId?: string; 
+  initialContent?: any; 
+  formMetadata?: any 
+}) {
   const [isPreview, setIsPreview] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [title, setTitle] = useState<string>("Form Title");
+  const [title, setTitle] = useState<string>(formMetadata?.title || "Form Title");
+  const { getToken } = useAuth();
 
   const editor = useCreateBlockNote({
     schema: mySchema,
-    initialContent: [
+    initialContent: initialContent || [
       {
         type: "paragraph",
         content:
@@ -546,6 +616,84 @@ export default function FormBuilder() {
       },
     ],
   });
+
+  const saveFormv0 = async () => {
+    try {
+      const token = await getToken();
+      const pages = parseFormByPages(editor);
+      const formData = {
+        title: title,
+        content: pages,
+      };
+      console.log(formData);
+      const response = await fetch("/api/forms", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log("Form saved successfully:", data);
+    } catch (error) {
+      console.error("Error saving form:", error);
+    }
+  };
+
+  const saveForm = async () => {
+    try {
+      const token = await getToken();
+      const formStructure: any = parseFormByPages(editor);
+      const formData = {
+        title: formStructure.metadata?.title || "Untitled Form",
+        description: formStructure.metadata?.description || "",
+        content: formStructure.pages,
+        isPublic: true, // Make public by default for sharing
+      };
+
+      console.log("Saving form:", formData);
+
+      let response;
+      if (formId) {
+        // Update existing form
+        response = await fetch(`http://localhost:3001/api/forms/${formId}`, {
+          method: "PUT",
+          body: JSON.stringify(formData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        // Create new form
+        response = await fetch("http://localhost:3001/api/forms", {
+          method: "POST",
+          body: JSON.stringify(formData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Form saved successfully:", data);
+      alert("Form saved successfully!");
+      
+      // If this was a new form, redirect to edit page
+      if (!formId && data.id) {
+        window.location.href = `/builder/${data.id}`;
+      }
+    } catch (error) {
+      console.error("Error saving form:", error);
+      alert("Error saving form. Check console for details.");
+    }
+  };
 
   const exportForm = () => {
     const pages = parseFormByPages(editor);
@@ -591,23 +739,6 @@ export default function FormBuilder() {
 
   return (
     <div className="h-full w-full flex flex-col">
-      {/* <div className="border-b p-4 flex justify-between items-center bg-white">
-        <h1 className="text-xl font-bold">Form Builder</h1>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsPreview(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Preview
-          </button>
-          <button
-            onClick={exportForm}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            Export
-          </button>
-        </div>
-      </div> */}
       <div className="w-full h-full flex flex-col">
         <div className="border-b border-gray-200 w-full flex-none"></div>
         <div className="flex flex-row justify-between items-center px-14 py-8">
@@ -616,8 +747,8 @@ export default function FormBuilder() {
             <Button onClick={() => setIsPreview(true)}>
               <Plus /> Preview
             </Button>
-            <Button onClick={() => exportFormv2(editor)}>
-              <Download /> Export
+            <Button onClick={() => saveForm()}>
+              <Download /> Save
             </Button>
           </div>
         </div>
@@ -634,7 +765,7 @@ export default function FormBuilder() {
           <SuggestionMenuController
             triggerCharacter="/"
             getItems={async (query) =>
-                //@ts-ignore
+              //@ts-ignore
               filterSuggestionItems(getCustomSlashMenuItems(editor), query)
             }
           />
