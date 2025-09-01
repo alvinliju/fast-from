@@ -119,6 +119,12 @@ const shortTextBlock = createReactBlockSpec(
         });
       };
 
+      const updatePlaceholder = (newPlaceholder:any) => {
+        props.editor.updateBlock(props.block, {
+          props:{...props.block.props, placeholder: newPlaceholder}
+        })
+      }
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -138,6 +144,8 @@ const shortTextBlock = createReactBlockSpec(
 
             <Input
               type="text"
+              value={props.block.props.placeholder}
+              onChange={(e) => updatePlaceholder(e.target.value)}
               className=" max-w-sm text-2xl h-12 px-4 py-1"
               placeholder={props.block.props.placeholder}
             ></Input>
@@ -167,6 +175,12 @@ const longTextBlock = createReactBlockSpec(
         });
       };
 
+      const updatePlaceholder = (newPlaceholder:any) => {
+        props.editor.updateBlock(props.block, {
+          props:{...props.block.props, placeholder: newPlaceholder}
+        })
+      }
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -179,6 +193,8 @@ const longTextBlock = createReactBlockSpec(
             />
             <Textarea
               placeholder={props.block.props.placeholder}
+              value={props.block.props.placeholder}
+              onChange={(e) => updatePlaceholder(e.target.value)}
               className="max-w-sm min-h-[100px]"
             ></Textarea>
           </div>
@@ -207,6 +223,12 @@ const emailBlock = createReactBlockSpec(
         });
       };
 
+      const updatePlaceholder = (newPlaceholder:any) => {
+        props.editor.updateBlock(props.block, {
+          props:{...props.block.props, placeholder: newPlaceholder}
+        })
+      }
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -220,6 +242,8 @@ const emailBlock = createReactBlockSpec(
             <Input
               type="email"
               className="max-w-sm h-12 px-4 py-1"
+              value={props.block.props.placeholder}
+              onChange={(e) => updatePlaceholder(e.target.value)}
               placeholder={props.block.props.placeholder}
             ></Input>
           </div>
@@ -248,6 +272,12 @@ const numberBlock = createReactBlockSpec(
         });
       };
 
+      const updatePlaceholder = (newPlaceholder:any) => {
+        props.editor.updateBlock(props.block, {
+          props:{...props.block.props, placeholder: newPlaceholder}
+        })
+      }
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -261,6 +291,8 @@ const numberBlock = createReactBlockSpec(
             <Input
               type="number"
               className="max-w-sm h-12 px-4 py-1"
+              value={props.block.props.placeholder}
+              onChange={(e) => updatePlaceholder(e.target.value)}
               placeholder={props.block.props.placeholder}
             ></Input>
           </div>
@@ -287,10 +319,13 @@ const multipleChoiceBlock = createReactBlockSpec(
         props.block.props.options || ["Option 1", "Option 2"]
       );
 
-      const optionsArray =
-        typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map((opt) => opt.trim())
-          : props.block.props.options || [];
+      const getOptionsArray = () => {
+          return typeof props.block.props.options === "string"
+          ? props.block.props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
+          : ["Option 1", "Option 2"];
+      };
+
+      const optionsArray = getOptionsArray();
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -298,17 +333,25 @@ const multipleChoiceBlock = createReactBlockSpec(
         });
       };
 
-      const updateOptions = (newOptions: any) => {
-        props.editor.updateBlock(props.block, {
-          props: { ...props.block.props, options: newOptions },
+      const updateOptions = (newOptionsArray: string[]) => {
+       const optionsString = newOptionsArray.join(",")
+       props.editor.updateBlock(props.block, {
+          props: { ...props.block.props, options: optionsString },
         });
       };
 
       const addOption = () => {
-        const newOptions = [...options, `Option ${options.length + 1}`];
-        setOptions(newOptions);
-        updateOptions(newOptions);
+        const currentOption = getOptionsArray()
+        const newOptions = [...currentOption, `Option ${options.length + 1}`];
+        updateOptions(newOptions)
       };
+
+      const updateOption = (index:number, newValue:string) => {
+        const currentOptions = getOptionsArray()
+        const newOptions = [...currentOptions]
+        newOptions[index] = newValue
+        updateOptions(newOptions)
+      }
 
       return (
         <div className="w-full h-full flex flex-col py-4">
@@ -333,10 +376,7 @@ const multipleChoiceBlock = createReactBlockSpec(
                     type="text"
                     value={option}
                     onChange={(e) => {
-                      const newOptions = [...options];
-                      newOptions[index] = e.target.value;
-                      setOptions(newOptions);
-                      updateOptions(newOptions);
+                      updateOption(index, e.target.value)
                     }}
                     className="flex-1 bg-transparent border-none focus:outline-none text-sm"
                   />
@@ -524,7 +564,7 @@ const getCustomSlashMenuItems = (
   },
 ];
 
-// PARSER FUNCTION
+//fucking parser function this is the heartt ngl
 const parseFormByPages = (editor: any) => {
   const blocks = editor.document;
   const pages = [];
@@ -755,7 +795,7 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
       </div>
 
       {/* Make the editor take full remaining height */}
-      <div className="w-full h-full not-first:flex-1">
+      <div className="w-full h-screen not-first:flex-1">
         <BlockNoteView
           editor={editor}
           slashMenu={false}
