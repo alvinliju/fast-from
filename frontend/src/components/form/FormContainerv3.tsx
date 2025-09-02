@@ -357,6 +357,15 @@ const QuestionRenderer = ({
           placeholder={placeholder}
         />
       );
+    case "longText":
+        return (
+          <FancyTextArea
+            label={label}
+            value={value}
+            onChange={(e) => onChange(question.id, e.target.value)}
+            placeholder={placeholder}
+          />
+        );
     case "checkbox":
       // Convert string options to array
       const checkboxOptionsArray = typeof options === "string" 

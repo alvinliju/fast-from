@@ -317,7 +317,7 @@ const multipleChoiceBlock = createReactBlockSpec(
     render: (props) => {
       const getOptionsArray = () => {
         return typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
+          ? props.block.props.options.split(",").map(opt => opt).filter(opt => opt != "")
           : ["Option 1", "Option 2"];
       };
 
@@ -349,6 +349,13 @@ const multipleChoiceBlock = createReactBlockSpec(
         updateOptions(newOptions);
       };
 
+      const handleOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addOption();
+        }
+      };
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -360,7 +367,7 @@ const multipleChoiceBlock = createReactBlockSpec(
               className="text-lg font-medium text-gray-800 bg-transparent border-none outline-none focus:ring-0 placeholder-gray-400"
               placeholder="Type your question here..."
             />
-            <div className="space-y-2 max-w-sm">
+           <div className="space-y-2 max-w-sm">
               {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
@@ -369,33 +376,15 @@ const multipleChoiceBlock = createReactBlockSpec(
                     disabled
                     className="w-4 h-4"
                   />
-                  <div 
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => {
-                      // Only stop slash at the beginning
-                      if (e.key === '/' && e.target.selectionStart === 0) {
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    <div
-                      id={`option-${props.block.id}-${index}`}
-                      contentEditable
-                      suppressContentEditableWarning={true}
-                      onInput={(e) => {
-                        const target = e.target as HTMLDivElement;
-                        updateOption(index, target.textContent || "");
-                      }}
-                      onKeyDown={(e) => {
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                      }}
-                      className="flex-1 bg-transparent border-none focus:outline-none text-sm min-h-[20px]"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {option}
-                    </div>
-                  </div>
+                  <Input
+                    id={`option-${props.block.id}-${index}`}
+                    type="text"
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    onKeyDown={(e) => handleOptionKeyDown(e, index)}
+                    // placeholder={`Option ${index + 1}`}
+                    className="flex-1 text-sm p-1 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
+                  />
                 </div>
               ))}
               <button
@@ -427,9 +416,10 @@ const checkboxBlock = createReactBlockSpec(
     render: (props) => {
       const getOptionsArray = () => {
         return typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
+          ? props.block.props.options.split(",").map(opt => opt).filter(opt => opt != "")
           : ["Option 1", "Option 2"];
       };
+
 
       const optionsArray = getOptionsArray();
 
@@ -459,6 +449,13 @@ const checkboxBlock = createReactBlockSpec(
         updateOptions(newOptions);
       };
 
+      const handleOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addOption();
+        }
+      };
+
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
@@ -474,33 +471,14 @@ const checkboxBlock = createReactBlockSpec(
               {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input type="checkbox" disabled className="w-4 h-4" />
-                  <div 
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => {
-                      // Only stop slash at the beginning
-                      if (e.key === '/' && e.target.selectionStart === 0) {
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    <div
-                      id={`checkbox-option-${props.block.id}-${index}`}
-                      contentEditable
-                      suppressContentEditableWarning={true}
-                      onInput={(e) => {
-                        const target = e.target as HTMLDivElement;
-                        updateOption(index, target.textContent || "");
-                      }}
-                      onKeyDown={(e) => {
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                      }}
-                      className="flex-1 bg-transparent border-none focus:outline-none text-sm min-h-[20px]"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {option}
-                    </div>
-                  </div>
+                  <Input
+                    id={`checkbox-option-${props.block.id}-${index}`}
+                    type="text"
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    onKeyDown={(e) => handleOptionKeyDown(e, index)}
+                    className="flex-1 text-sm p-1 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
+                  />
                 </div>
               ))}
               <button
