@@ -369,15 +369,33 @@ const multipleChoiceBlock = createReactBlockSpec(
                     disabled
                     className="w-4 h-4"
                   />
-                  <input
-                    id={`option-${props.block.id}-${index}`}
-                    type="text"
-                    value={option}
-                    onChange={(e) => {
-                      updateOption(index, e.target.value);
+                  <div 
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      // Only stop slash at the beginning
+                      if (e.key === '/' && e.target.selectionStart === 0) {
+                        e.stopPropagation();
+                      }
                     }}
-                    className="flex-1 bg-transparent border-none focus:outline-none text-sm"
-                  />
+                  >
+                    <div
+                      id={`option-${props.block.id}-${index}`}
+                      contentEditable
+                      suppressContentEditableWarning={true}
+                      onInput={(e) => {
+                        const target = e.target as HTMLDivElement;
+                        updateOption(index, target.textContent || "");
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                      }}
+                      className="flex-1 bg-transparent border-none focus:outline-none text-sm min-h-[20px]"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {option}
+                    </div>
+                  </div>
                 </div>
               ))}
               <button
@@ -456,15 +474,33 @@ const checkboxBlock = createReactBlockSpec(
               {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input type="checkbox" disabled className="w-4 h-4" />
-                  <input
-                    id={`checkbox-option-${props.block.id}-${index}`}
-                    type="text"
-                    value={option}
-                    onChange={(e) => {
-                      updateOption(index, e.target.value);
+                  <div 
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      // Only stop slash at the beginning
+                      if (e.key === '/' && e.target.selectionStart === 0) {
+                        e.stopPropagation();
+                      }
                     }}
-                    className="flex-1 bg-transparent border-none focus:outline-none text-sm"
-                  />
+                  >
+                    <div
+                      id={`checkbox-option-${props.block.id}-${index}`}
+                      contentEditable
+                      suppressContentEditableWarning={true}
+                      onInput={(e) => {
+                        const target = e.target as HTMLDivElement;
+                        updateOption(index, target.textContent || "");
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                      }}
+                      className="flex-1 bg-transparent border-none focus:outline-none text-sm min-h-[20px]"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {option}
+                    </div>
+                  </div>
                 </div>
               ))}
               <button

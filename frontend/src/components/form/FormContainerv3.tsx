@@ -322,13 +322,13 @@ const QuestionRenderer = ({
         />
       );
     case "multipleChoice":
-      const getOptionsArray = () => {
+      const getOptionsArrayMultipleChoice = () => {
         return typeof props.options === "string"
         ? props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
         : ["Option 1", "Option 2"];
       };
 
-      const optionsArray = getOptionsArray();
+      const optionsArrayMultipleChoice = getOptionsArrayMultipleChoice();
       
     
       return (
@@ -336,7 +336,7 @@ const QuestionRenderer = ({
           label={label}
           value={value}
           onChange={(selectedValue) => onChange(question.id, selectedValue)}
-          options={optionsArray}
+          options={optionsArrayMultipleChoice}
         />
       );
     case "select":
@@ -358,11 +358,21 @@ const QuestionRenderer = ({
         />
       );
     case "checkbox":
+      // Convert string options to array
+      const checkboxOptionsArray = typeof options === "string" 
+        ? options.split(",").map(opt => opt.trim()).filter(opt => opt) 
+        : options || [];
+      
+      // Parse current value as array
+      const currentCheckboxValue = value ? 
+        (typeof value === 'string' ? value.split(',').map(v => v.trim()) : value) : [];
+      
       return (
         <FancyCheckbox
           label={label}
-          checked={value}
-          onChange={(checked) => onChange(question.id, checked.toString())}
+          value={currentCheckboxValue}
+          onChange={(selectedValues) => onChange(question.id, selectedValues.join(','))}
+          options={checkboxOptionsArray}
         />
       );
     default:
@@ -487,29 +497,58 @@ const FancyTextArea = ({
 // Checkbox
 const FancyCheckbox = ({
   label,
-  checked,
+  value, // This should be an array of selected values
   onChange,
+  options,
 }: {
   label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) => (
-  <div className="mb-8">
-    <button
-      onClick={() => onChange(!checked)}
-      className="flex items-center space-x-4 p-4 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all w-full text-left"
-    >
-      <div
-        className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
-          checked ? "bg-blue-500 border-blue-500" : "border-gray-300"
-        }`}
-      >
-        {checked && <Check className="w-4 h-4 text-white" />}
-      </div>
-      <span className="text-lg font-medium text-gray-800">{label}</span>
-    </button>
-  </div>
-);
+  value: string[]; // Change from boolean to string array
+  onChange: (selectedValues: string[]) => void; // Change signature
+  options: string[];
+}) => {
+  // Parse the value if it's a string (from form data)
+  const selectedValues = Array.isArray(value) ? value : 
+    (typeof value === 'string' && value) ? value.split(',').map(v => v.trim()) : [];
+
+  const handleCheckboxChange = (option: string, isChecked: boolean) => {
+    let newSelectedValues;
+    if (isChecked) {
+      // Add the option if it's not already selected
+      newSelectedValues = [...selectedValues, option];
+    } else {
+      // Remove the option if it's currently selected
+      newSelectedValues = selectedValues.filter(val => val !== option);
+    }
+    onChange(newSelectedValues);
+  };
+
+  return (
+    <div className="mb-8">
+      <label className="block text-xl font-medium text-gray-800 mb-4">
+        {label}
+      </label>
+      {options.map((option) => {
+        const isChecked = selectedValues.includes(option);
+        return (
+          <button
+            key={option}
+            onClick={() => handleCheckboxChange(option, !isChecked)}
+            className="flex mt-4 items-center space-x-4 p-4 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all w-full text-left"
+          >
+            <div
+              className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
+                isChecked ? "bg-blue-500 border-blue-500" : "border-gray-300"
+              }`}
+            >
+              {isChecked && <Check className="w-4 h-4 text-white" />}
+            </div>
+            <span className="text-lg font-medium text-gray-800">{option}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 //4th component
 //basic naviagations
