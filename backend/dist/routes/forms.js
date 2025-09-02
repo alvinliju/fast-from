@@ -65,6 +65,7 @@ router.get('/:id', async (req, res) => {
             console.error('Supabase error:', error);
             return res.status(404).json({ error: 'Form not found or not public' });
         }
+        console.log(data);
         res.json(data);
     }
     catch (error) {

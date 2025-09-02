@@ -45,6 +45,15 @@ const sampleQuestions = [
       options: ["Red", "Blue", "Green", "Yellow", "Purple"],
     },
   },
+  {
+    id: "5",
+    type: "multipleChoice",
+    props: {
+      question: "What is your favorite color?",
+      options: ["Red", "Blue", "Green", "Yellow", "Purple"],
+      required: true,
+    },
+  }
 ];
 
 //what is a formContainer?
@@ -62,8 +71,13 @@ const sampleQuestions = [
 //it will also take in the formData and then store it accordingly in questionStruct
 //it will also take in the isSubmitted and then render the success screen
 
-export default function FormContainer() {
+export default function FormContainer({formId}:{formId:string}) {
   const [currentPage, setCurrentPage] = useState(0);
+   const [formContent, setFormContent] = useState<{
+      title: string;
+       description: string;
+       questions: any[];
+     } | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -81,6 +95,82 @@ export default function FormContainer() {
       handleNext();
     }
   };
+
+  //this function converts the block note content to questions
+  function convertBlockNoteToQuestions(blockNoteContent: any): any {
+    const questions: any = [];
+
+    blockNoteContent?.forEach((page: any) => {
+      console.log("processing page");
+
+      if (page.content && Array.isArray(page.content)) {
+        page.content.forEach((block: any) => {
+          if (
+            [
+              "shortText",
+              "longText",
+              "email",
+              "number",
+              "multipleChoice",
+              "checkbox",
+              "select"
+            ].includes(block.type)
+          ) {
+            questions.push({
+              id: block.id,
+              type: block.type,
+              props: block.props,
+            });
+          }
+        });
+      }
+    });
+
+    console.log("Question prop:", questions);
+    return questions;
+  }
+
+  const fetchForms = async (formIdAsString: string) => {
+    try {
+      console.log("formId as string",formIdAsString)
+      const response = await fetch(`http://localhost:3001/api/forms/${formIdAsString}`);
+      console.log("response from server",response)
+      if (response.ok) {
+        const formData = await response.json();
+        const questions = convertBlockNoteToQuestions(formData.content);
+        console.log(questions)
+        return {
+          title: formData.title,
+          description: formData.description,
+          questions: questions,
+        };
+      } else {
+        throw new Error("Form not found");
+      }
+    } catch (error) {
+      console.error("Error fetching form:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadForm = async () => {
+      if (!formId) return;
+      const data = await fetchForms(formId);
+      try {
+        if (data) {
+          setFormContent(data);
+        } else {
+            alert("form not found");
+        }
+      } catch (error) {
+        console.log("Form not found");
+        alert("form not found");
+      }
+    };
+
+    loadForm()
+  }, [formId]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
@@ -111,11 +201,13 @@ export default function FormContainer() {
   };
 
   const handleNext = () => {
-    if (currentPage === sampleQuestions.length - 1) {
+    if (currentPage < formContent?.questions?.length -1 ) {
+      console.log("current page",currentPage)
+      setCurrentPage((prev) => prev + 1);
+      
+    } else {
       setIsSubmitted(true);
       console.log("Form submitted:", formData);
-    } else {
-      setCurrentPage((prev) => prev + 1);
     }
   };
 
@@ -137,15 +229,15 @@ export default function FormContainer() {
           {/* we need the progress bar first */}
 
           <div className="mb-4 md:mb-8">
-            <ProgressBar current={currentPage} total={sampleQuestions.length} />
+            <ProgressBar current={currentPage} total={formContent?.questions.length} />
           </div>
           {/* we need the question */}
           <div className="flex items-center justify-center w-full  h-full">
             <AnimationWrapper key={currentPage}>
               <div className="w-full max-w-4xl">
                 <QuestionRenderer
-                  question={sampleQuestions[currentPage]}
-                  value={formData[sampleQuestions[currentPage].id] || ""}
+                  question={formContent?.questions[currentPage]}
+                  value={formData[formContent?.questions[currentPage].id] || ""}
                   onChange={handleChange}
                 />
               </div>
@@ -158,7 +250,7 @@ export default function FormContainer() {
               onNext={handleNext}
               showBack={currentPage > 0}
               showNext={true}
-              isLast={currentPage === sampleQuestions.length - 1}
+              isLast={currentPage >= formContent?.questions.length - 1}
             />
           </div>
         </div>
@@ -195,8 +287,12 @@ const QuestionRenderer = ({
   value: any;
   onChange: (questionId: string, value: string) => void;
 }) => {
+  if (!question) {
+    return <div>Loading question...</div>;
+}
   const { type, props } = question;
   const { question: label, placeholder, required, options } = props;
+  
   switch (question.type) {
     case "shortText":
       return (
@@ -223,6 +319,24 @@ const QuestionRenderer = ({
           value={value}
           onChange={(e) => onChange(question.id, e.target.value)}
           placeholder={placeholder}
+        />
+      );
+    case "multipleChoice":
+      const getOptionsArray = () => {
+        return typeof props.options === "string"
+        ? props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
+        : ["Option 1", "Option 2"];
+      };
+
+      const optionsArray = getOptionsArray();
+      
+    
+      return (
+        <FancySelect
+          label={label}
+          value={value}
+          onChange={(selectedValue) => onChange(question.id, selectedValue)}
+          options={optionsArray}
         />
       );
     case "select":

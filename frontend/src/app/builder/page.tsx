@@ -315,12 +315,8 @@ const multipleChoiceBlock = createReactBlockSpec(
   },
   {
     render: (props) => {
-      const [options, setOptions] = useState(
-        props.block.props.options || ["Option 1", "Option 2"]
-      );
-
       const getOptionsArray = () => {
-          return typeof props.block.props.options === "string"
+        return typeof props.block.props.options === "string"
           ? props.block.props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
           : ["Option 1", "Option 2"];
       };
@@ -334,29 +330,30 @@ const multipleChoiceBlock = createReactBlockSpec(
       };
 
       const updateOptions = (newOptionsArray: string[]) => {
-       const optionsString = newOptionsArray.join(",")
-       props.editor.updateBlock(props.block, {
+        const optionsString = newOptionsArray.join(",");
+        props.editor.updateBlock(props.block, {
           props: { ...props.block.props, options: optionsString },
         });
       };
 
       const addOption = () => {
-        const currentOption = getOptionsArray()
-        const newOptions = [...currentOption, `Option ${options.length + 1}`];
-        updateOptions(newOptions)
+        const currentOptions = getOptionsArray();
+        const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
+        updateOptions(newOptions);
       };
 
-      const updateOption = (index:number, newValue:string) => {
-        const currentOptions = getOptionsArray()
-        const newOptions = [...currentOptions]
-        newOptions[index] = newValue
-        updateOptions(newOptions)
-      }
+      const updateOption = (index: number, newValue: string) => {
+        const currentOptions = getOptionsArray();
+        const newOptions = [...currentOptions];
+        newOptions[index] = newValue;
+        updateOptions(newOptions);
+      };
 
       return (
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
             <input
+              id={`question-${props.block.id}`}
               type="text"
               value={props.block.props.question}
               onChange={(e) => updateQuestion(e.target.value)}
@@ -373,10 +370,11 @@ const multipleChoiceBlock = createReactBlockSpec(
                     className="w-4 h-4"
                   />
                   <input
+                    id={`option-${props.block.id}-${index}`}
                     type="text"
                     value={option}
                     onChange={(e) => {
-                      updateOption(index, e.target.value)
+                      updateOption(index, e.target.value);
                     }}
                     className="flex-1 bg-transparent border-none focus:outline-none text-sm"
                   />
@@ -409,14 +407,13 @@ const checkboxBlock = createReactBlockSpec(
   },
   {
     render: (props) => {
-      const [options, setOptions] = useState(
-        props.block.props.options || ["Option 1", "Option 2"]
-      );
+      const getOptionsArray = () => {
+        return typeof props.block.props.options === "string"
+          ? props.block.props.options.split(",").map(opt => opt.trim()).filter(opt => opt)
+          : ["Option 1", "Option 2"];
+      };
 
-      const optionsArray =
-        typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map((opt) => opt.trim())
-          : props.block.props.options || [];
+      const optionsArray = getOptionsArray();
 
       const updateQuestion = (newQuestion: any) => {
         props.editor.updateBlock(props.block, {
@@ -424,15 +421,23 @@ const checkboxBlock = createReactBlockSpec(
         });
       };
 
-      const updateOptions = (newOptions: any) => {
+      const updateOptions = (newOptionsArray: string[]) => {
+        const optionsString = newOptionsArray.join(",");
         props.editor.updateBlock(props.block, {
-          props: { ...props.block.props, options: newOptions },
+          props: { ...props.block.props, options: optionsString },
         });
       };
 
       const addOption = () => {
-        const newOptions = [...options, `Option ${options.length + 1}`];
-        setOptions(newOptions);
+        const currentOptions = getOptionsArray();
+        const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
+        updateOptions(newOptions);
+      };
+
+      const updateOption = (index: number, newValue: string) => {
+        const currentOptions = getOptionsArray();
+        const newOptions = [...currentOptions];
+        newOptions[index] = newValue;
         updateOptions(newOptions);
       };
 
@@ -440,6 +445,7 @@ const checkboxBlock = createReactBlockSpec(
         <div className="w-full h-full flex flex-col py-4">
           <div className="w-full h-full flex flex-col gap-2">
             <input
+              id={`question-${props.block.id}`}
               type="text"
               value={props.block.props.question}
               onChange={(e) => updateQuestion(e.target.value)}
@@ -451,13 +457,11 @@ const checkboxBlock = createReactBlockSpec(
                 <div key={index} className="flex items-center gap-2">
                   <input type="checkbox" disabled className="w-4 h-4" />
                   <input
+                    id={`checkbox-option-${props.block.id}-${index}`}
                     type="text"
                     value={option}
                     onChange={(e) => {
-                      const newOptions = [...options];
-                      newOptions[index] = e.target.value;
-                      setOptions(newOptions);
-                      updateOptions(newOptions);
+                      updateOption(index, e.target.value);
                     }}
                     className="flex-1 bg-transparent border-none focus:outline-none text-sm"
                   />
@@ -633,7 +637,6 @@ const parseFormByPages = (editor: any) => {
 const exportFormv2 = (editor: any) => {
   const pages = parseFormByPages(editor);
   console.log("Form Pages:", pages);
-  alert(`Form has ${pages.length} pages. Check console for structure.`);
 };
 
 export default function FormBuilder({ formId, initialContent, formMetadata }: { 
@@ -738,7 +741,6 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
   const exportForm = () => {
     const pages = parseFormByPages(editor);
     console.log("Form Pages:", pages);
-    alert(`Form has ${pages.length} pages. Check console for structure.`);
   };
 
   if (isPreview) {
@@ -757,6 +759,7 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
         </div>
 
         <div className="space-y-8">
+          
           {pages.map((page, pageIndex) => (
             <div key={pageIndex} className="border-l-4 border-blue-500 pl-4">
               <h2 className="text-lg font-bold mb-4">Page {pageIndex + 1}</h2>
