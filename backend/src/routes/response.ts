@@ -23,7 +23,7 @@ router.post('/:id', async(req, res)=>{
 })
 
 //get all responses according to form id
-router.get('/:id', requireAuth, async(req, res)=>{
+router.get('/:id', async(req, res)=>{
     try{
         const {id} = req.params;
         const {data, error} = await supabase.from('responses').select('*').eq('form_id', id)

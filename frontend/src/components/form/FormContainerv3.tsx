@@ -186,7 +186,7 @@ export default function FormContainer({formId}:{formId:string}) {
   // Fix the form submission in FormContainer.tsx
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`/api/responses/${formId}`, {
+      const response = await fetch(`http://localhost:3001/api/responses/${formId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -206,6 +206,7 @@ export default function FormContainer({formId}:{formId:string}) {
       setCurrentPage((prev) => prev + 1);
       
     } else {
+      handleSubmit();
       setIsSubmitted(true);
       console.log("Form submitted:", formData);
     }

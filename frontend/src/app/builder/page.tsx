@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { div } from "motion/react-client";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const formTitleBlock = createReactBlockSpec(
   {
@@ -794,6 +795,11 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
     );
   }
 
+  const handleShare = () => {
+    const shareUrl = `${window.location.origin}/form/${formId}`;
+    navigator.clipboard.writeText(shareUrl);
+  };
+
   return (
     <div className="h-full w-full flex flex-col">
       <div className="w-full h-full flex flex-col">
@@ -801,12 +807,23 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
         <div className="flex flex-row justify-between items-center px-14 py-8">
           <div>stupidforms</div>
           <div className="flex flex-row gap-2">
-            <Button onClick={() => setIsPreview(true)}>
-              <Plus /> Preview
-            </Button>
             <Button onClick={() => saveForm()}>
               <Download /> Save
             </Button>
+            <Button
+            onClick={() =>
+              toast("Form URL copied to clipboard!", {
+                description: "Share your form with others",
+                action: {
+                  label: "Copy",
+                  onClick: () => handleShare(),
+                },
+              })
+            }
+            >
+              Share
+            </Button>
+
           </div>
         </div>
       </div>
@@ -817,7 +834,7 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
           editor={editor}
           slashMenu={false}
           theme="light"
-          className="h-full w-full"
+          className="h-full max-w-3xl mx-auto"
         >
           <SuggestionMenuController
             triggerCharacter="/"
