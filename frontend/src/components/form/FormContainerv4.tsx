@@ -168,9 +168,11 @@ export default function FormContainer({ formId }: { formId: string }) {
   }, [formId])
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyPress)
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress)
+    if (typeof window !== 'undefined') {
+      document.addEventListener("keydown", handleKeyPress)
+      return () => {
+        document.removeEventListener("keydown", handleKeyPress)
+      }
     }
   }, [currentPage, isSubmitted])
 
@@ -609,7 +611,7 @@ const FancyCheckbox = ({
   const selectedValues = Array.isArray(value)
     ? value
     : typeof value === "string" && value
-      ? value.split(",").map((v) => v.trim())
+      ? (value as string).split(",").map((v) => v.trim())
       : []
 
   const handleCheckboxChange = (option: string, isChecked: boolean) => {

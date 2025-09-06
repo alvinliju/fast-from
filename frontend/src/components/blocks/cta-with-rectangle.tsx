@@ -54,6 +54,7 @@ export function CTASection({
 
         {/* Action Button */}
         <Button
+        //@ts-ignore
           variant={action.variant || "default"}
           size="lg"
           className="animate-in fade-in-50 slide-in-from-bottom-3 duration-500 delay-500"

@@ -4,12 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { use } from "react";
-import FormBuilder from "../page";
 import { title } from "process";
 import { div } from "motion/react-client";
+import dynamic from "next/dynamic";
+
+import FormBuilder from "../page";
 
 const dummyContent = [
-  {
+  { 
     type: "formTitle",
     props: {
       title: "Dummy Form Title",

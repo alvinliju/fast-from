@@ -3,19 +3,20 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
+
+
+
 import {
-  BlockNoteEditor,
   defaultBlockSpecs,
   filterSuggestionItems,
+  BlockNoteEditor,
   insertOrUpdateBlock,
 } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
+import { DefaultReactSuggestionItem } from "@blocknote/react";
 import {
-  DefaultReactSuggestionItem,
   getDefaultReactSlashMenuItems,
-  SuggestionMenuController,
   useCreateBlockNote,
 } from "@blocknote/react";
 import { createReactBlockSpec } from "@blocknote/react";
@@ -35,16 +36,22 @@ import { div } from "motion/react-client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+import { BlockNoteView } from "@blocknote/mantine";
+import { SuggestionMenuController } from "@blocknote/react";
+
+
+
+
 const formTitleBlock = createReactBlockSpec(
   {
-    type:"formTitle",
-    content:"none",
-    propSchema:{
-      title:{default:"Untitled Form"}
-    }
+    type: "formTitle",
+    content: "none",
+    propSchema: {
+      title: { default: "Untitled Form" },
+    },
   },
   {
-    render:(props)=>{
+    render: (props) => {
       const updateTitle = (newTitle: string) => {
         props.editor.updateBlock(props.block, {
           props: { ...props.block.props, title: newTitle },
@@ -61,15 +68,12 @@ const formTitleBlock = createReactBlockSpec(
               className="text-3xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 placeholder-gray-400 w-full mb-2"
               placeholder="Form Title"
             />
-
           </div>
         </div>
       );
-
-      
-    }
+    },
   }
-)
+);
 
 // PAGE BREAK BLOCK
 const pageBreakBlock = createReactBlockSpec(
@@ -120,11 +124,11 @@ const shortTextBlock = createReactBlockSpec(
         });
       };
 
-      const updatePlaceholder = (newPlaceholder:any) => {
+      const updatePlaceholder = (newPlaceholder: any) => {
         props.editor.updateBlock(props.block, {
-          props:{...props.block.props, placeholder: newPlaceholder}
-        })
-      }
+          props: { ...props.block.props, placeholder: newPlaceholder },
+        });
+      };
 
       return (
         <div className="w-full h-full flex flex-col py-4">
@@ -176,11 +180,11 @@ const longTextBlock = createReactBlockSpec(
         });
       };
 
-      const updatePlaceholder = (newPlaceholder:any) => {
+      const updatePlaceholder = (newPlaceholder: any) => {
         props.editor.updateBlock(props.block, {
-          props:{...props.block.props, placeholder: newPlaceholder}
-        })
-      }
+          props: { ...props.block.props, placeholder: newPlaceholder },
+        });
+      };
 
       return (
         <div className="w-full h-full flex flex-col py-4">
@@ -224,11 +228,11 @@ const emailBlock = createReactBlockSpec(
         });
       };
 
-      const updatePlaceholder = (newPlaceholder:any) => {
+      const updatePlaceholder = (newPlaceholder: any) => {
         props.editor.updateBlock(props.block, {
-          props:{...props.block.props, placeholder: newPlaceholder}
-        })
-      }
+          props: { ...props.block.props, placeholder: newPlaceholder },
+        });
+      };
 
       return (
         <div className="w-full h-full flex flex-col py-4">
@@ -273,11 +277,11 @@ const numberBlock = createReactBlockSpec(
         });
       };
 
-      const updatePlaceholder = (newPlaceholder:any) => {
+      const updatePlaceholder = (newPlaceholder: any) => {
         props.editor.updateBlock(props.block, {
-          props:{...props.block.props, placeholder: newPlaceholder}
-        })
-      }
+          props: { ...props.block.props, placeholder: newPlaceholder },
+        });
+      };
 
       return (
         <div className="w-full h-full flex flex-col py-4">
@@ -318,7 +322,10 @@ const multipleChoiceBlock = createReactBlockSpec(
     render: (props) => {
       const getOptionsArray = () => {
         return typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map(opt => opt).filter(opt => opt != "")
+          ? props.block.props.options
+              .split(",")
+              .map((opt) => opt)
+              .filter((opt) => opt != "")
           : ["Option 1", "Option 2"];
       };
 
@@ -339,7 +346,10 @@ const multipleChoiceBlock = createReactBlockSpec(
 
       const addOption = () => {
         const currentOptions = getOptionsArray();
-        const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
+        const newOptions = [
+          ...currentOptions,
+          `Option ${currentOptions.length + 1}`,
+        ];
         updateOptions(newOptions);
       };
 
@@ -350,8 +360,11 @@ const multipleChoiceBlock = createReactBlockSpec(
         updateOptions(newOptions);
       };
 
-      const handleOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === 'Enter') {
+      const handleOptionKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>,
+        index: number
+      ) => {
+        if (e.key === "Enter") {
           e.preventDefault();
           addOption();
         }
@@ -368,7 +381,7 @@ const multipleChoiceBlock = createReactBlockSpec(
               className="text-lg font-medium text-gray-800 bg-transparent border-none outline-none focus:ring-0 placeholder-gray-400"
               placeholder="Type your question here..."
             />
-           <div className="space-y-2 max-w-sm">
+            <div className="space-y-2 max-w-sm">
               {optionsArray.map((option: any, index: number) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
@@ -417,10 +430,12 @@ const checkboxBlock = createReactBlockSpec(
     render: (props) => {
       const getOptionsArray = () => {
         return typeof props.block.props.options === "string"
-          ? props.block.props.options.split(",").map(opt => opt).filter(opt => opt != "")
+          ? props.block.props.options
+              .split(",")
+              .map((opt) => opt)
+              .filter((opt) => opt != "")
           : ["Option 1", "Option 2"];
       };
-
 
       const optionsArray = getOptionsArray();
 
@@ -439,7 +454,10 @@ const checkboxBlock = createReactBlockSpec(
 
       const addOption = () => {
         const currentOptions = getOptionsArray();
-        const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
+        const newOptions = [
+          ...currentOptions,
+          `Option ${currentOptions.length + 1}`,
+        ];
         updateOptions(newOptions);
       };
 
@@ -450,8 +468,11 @@ const checkboxBlock = createReactBlockSpec(
         updateOptions(newOptions);
       };
 
-      const handleOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === 'Enter') {
+      const handleOptionKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>,
+        index: number
+      ) => {
+        if (e.key === "Enter") {
           e.preventDefault();
           addOption();
         }
@@ -590,7 +611,7 @@ const parseFormByPages = (editor: any) => {
   let currentPage: any = [];
   let formMetadata = {
     title: "Untitled Form",
-    description: ""
+    description: "",
   };
 
   blocks.forEach((block: any) => {
@@ -598,7 +619,7 @@ const parseFormByPages = (editor: any) => {
       // Extract form metadata
       formMetadata = {
         title: block.props.title || "Untitled Form",
-        description: block.props.description || ""
+        description: block.props.description || "",
       };
     } else if (block.type === "pageBreak") {
       if (currentPage.length > 0) {
@@ -644,8 +665,8 @@ const parseFormByPages = (editor: any) => {
     });
   }
   return {
-    metadata:formMetadata,
-    pages
+    metadata: formMetadata,
+    pages,
   };
 };
 
@@ -654,14 +675,20 @@ const exportFormv2 = (editor: any) => {
   console.log("Form Pages:", pages);
 };
 
-export default function FormBuilder({ formId, initialContent, formMetadata }: { 
-  formId?: string; 
-  initialContent?: any; 
-  formMetadata?: any 
+function FormBuilder({
+  formId,
+  initialContent,
+  formMetadata,
+}: {
+  formId?: string;
+  initialContent?: any;
+  formMetadata?: any;
 }) {
   const [isPreview, setIsPreview] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [title, setTitle] = useState<string>(formMetadata?.title || "Form Title");
+  const [title, setTitle] = useState<string>(
+    formMetadata?.title || "Form Title"
+  );
   const { getToken } = useAuth();
 
   const editor = useCreateBlockNote({
@@ -742,7 +769,7 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
       const data = await response.json();
       console.log("Form saved successfully:", data);
       alert("Form saved successfully!");
-      
+
       // If this was a new form, redirect to edit page
       if (!formId && data.id) {
         window.location.href = `/builder/${data.id}`;
@@ -774,8 +801,7 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
         </div>
 
         <div className="space-y-8">
-          
-          {pages.map((page, pageIndex) => (
+          {pages.pages.map((page, pageIndex) => (
             <div key={pageIndex} className="border-l-4 border-blue-500 pl-4">
               <h2 className="text-lg font-bold mb-4">Page {pageIndex + 1}</h2>
               <div className="space-y-4">
@@ -806,8 +832,8 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
       <div className="flex items-center justify-between px-6 py-4 border-b ">
         {/* Left side - Back button and form info */}
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => window.history.back()}
             className="text-gray-600 hover:text-gray-900"
@@ -826,15 +852,15 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
 
         {/* Right side - Actions */}
         <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => saveForm()}
             className="text-gray-600 hover:text-gray-900"
           >
             Save
           </Button>
-          
+
           <Button
             size="sm"
             onClick={() =>
@@ -855,12 +881,12 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
 
       {/* Editor - Full height minus header */}
       <div className="flex-1 overflow-hidden bg-white">
-        <div className="h-full max-w-2xl mx-auto bg-white ">
+        <div className="h-full max-w-2xl mx-auto bg-white overflow-y-auto scrollbar-hide ">
           <BlockNoteView
-            editor={editor}
+            editor={editor as any}
             slashMenu={false}
             theme="light"
-            className="h-full px-8 py-8"
+            className="min-h-full px-8 py-8" // Changed from h-full to min-h-full
           >
             <SuggestionMenuController
               triggerCharacter="/"
@@ -875,3 +901,11 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
     </div>
   );
 }
+
+import dynamic from "next/dynamic";
+
+const FormBuilderClient = dynamic(() => Promise.resolve(FormBuilder), {
+  ssr: false,
+});
+
+export default FormBuilderClient;
