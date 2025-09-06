@@ -1,192 +1,294 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Zap, Smartphone, Share2, ChevronDown, Menu, X, Play } from "lucide-react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { ArrowRight, Zap, Shield, Smartphone, BarChart3, Users, Star, Menu, X, Play, Check, Twitter, Github, Linkedin, BellIcon, FileTextIcon, NutIcon, GlobeIcon, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { GradientButton } from "@/components/ui/gradient-button"
 import { Button } from "@/components/ui/button"
-import { FastFormFooter } from "@/components/footer/Footer"
+import { HeroSection } from "@/components/blocks/hero-section"
+import { Icons } from "@/components/ui/icons";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
+import Link from 'next/link'
+import { CTASection } from "@/components/blocks/cta-with-rectangle";
 
-function Navbar() {
-  const [isOpen, setIsOpen] = React.useState(false);
 
+
+function Hero(){
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex justify-between items-center h-14">
-          {/* Logo */}
-          <div className="flex items-center">
-            <div className="text-lg font-medium text-black">FastForm</div>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            <a href="#" className="text-gray-600 hover:text-black transition-colors text-sm px-3 py-2 rounded-md hover:bg-gray-50">
-              Features
-            </a>
-            <a href="#" className="text-gray-600 hover:text-black transition-colors text-sm px-3 py-2 rounded-md hover:bg-gray-50">
-              Pricing
-            </a>
-            <a href="#" className="text-gray-600 hover:text-black transition-colors text-sm px-3 py-2 rounded-md hover:bg-gray-50">
-              Help
-            </a>
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="text-sm">
-              Log in
-            </Button>
-            <Button size="sm" className="text-sm bg-black text-white hover:bg-gray-800">
-              Sign up
-            </Button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-function Hero() {
-  return (
-    <div className="pt-20 pb-24">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs bg-gray-50 text-gray-600 mb-8 border border-gray-100">
-          <span className="mr-1.5">✨</span>
-          Currently in beta
-        </div>
-        
-        {/* Main Headline */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-black mb-6 leading-tight tracking-tight">
-          Forms that don't{" "}
-          <span className="text-red-500">suck</span>
-        </h1>
-        
-        {/* Subheading */}
-        <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Stop wrestling with Google Forms' garbage UX. FastForm gives you beautiful, 
-          mobile-first forms with zero learning curve.
-        </p>
-        
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-          <GradientButton >
-            Start creating forms
-          </GradientButton>
-          <Button variant="outline"  className="gap-2 border-gray-300 px-8 py-6">
-            <Play className="w-4 h-4" />
-            Watch demo
-          </Button>
-        </div>
-        
-        {/* Social Proof */}
-        <p className="text-xs text-gray-500">
-          Trusted by 10,000+ teams who ditched Google Forms
-        </p>
-      </div>
-    </div>
-  );
+    <HeroSection
+      badge={{
+        text: "v0.1 BETA",
+        action: {
+          text: "",
+          href: "/",
+        },
+      }}
+      title="Build beautiful forms in minutes"
+      description="Stop settling for clunky form builders. Get the features you need without the complexity you don't."
+      actions={[
+        {
+          text: "Get Started",
+          href: "/builder",
+          variant: "default",
+        },
+        {
+          text: "GitHub",
+          href: "https://github.com/alvinliju/fast-from",
+          variant: "glow",
+          icon: <Icons.gitHub className="h-5 w-5" />,
+        },
+      ]}
+      image={{
+        light: "https://www.launchuicomponents.com/app-light.png",
+        dark: "https://www.launchuicomponents.com/app-dark.png",
+        alt: "UI Components Preview",
+      }}
+    />
+  )
 }
 
 function Features() {
   const features = [
     {
-      icon: <Zap className="w-5 h-5" />,
-      title: "Lightning fast",
-      description: "Create forms in seconds with / commands. No learning curve."
+      Icon: FileTextIcon,
+      name: "Notion-Style Builder",
+      description: "Use `/` to add questions, just like Notion. No complicated editors or setup wizards.",
+      href: "/",
+      cta: "Learn more",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
     },
     {
-      icon: <Smartphone className="w-5 h-5" />,
-      title: "Mobile first",
-      description: "WhatsApp-style experience. One question at a time."
+      Icon: NutIcon,
+      name: "6 Question Types",
+      description: "Short text, long text, email, number, multiple choice, and checkboxes. More coming soon.",
+      href: "/",
+      cta: "Learn more",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
     },
     {
-      icon: <Share2 className="w-5 h-5" />,
-      title: "Instant sharing",
-      description: "Get public URL immediately. Works on all devices."
-    }
+      Icon: GlobeIcon,
+      name: "Multi-Step Forms",
+      description: "Add page breaks that actually work. No hacks or workarounds needed.",
+      href: "/",
+      cta: "Learn more",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
+    },
+    {
+      Icon: CalendarIcon,
+      name: "Instant Sharing",
+      description: "Get a public URL immediately. No publishing steps or complicated settings.",
+      href: "/",
+      cta: "Learn more",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
+    },
+    {
+      Icon: BellIcon,
+      name: "Response Collection",
+      description: "Collect form submissions and store them in your database. View responses in real-time.",
+      href: "/",
+      cta: "Learn more",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
+    },
   ];
 
   return (
-    <div className="py-24 bg-gray-50/50">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-semibold text-black mb-3">
-            Finally, forms that work on mobile
-          </h2>
-          <p className="text-gray-600 max-w-xl mx-auto">
-            Google Forms is from 2008. Your users deserve better.
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="text-center">
-              <div className="flex justify-center mb-4">
-                <div className="p-3 rounded-xl bg-white shadow-sm border border-gray-100">
-                  {feature.icon}
-                </div>
-              </div>
-              <h3 className="font-medium text-black mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+    <section id="features">
+      <BentoGrid className="lg:grid-rows- py-16">
+        {features.map((feature) => (
+          <BentoCard key={feature.name} {...feature} />
+        ))}
+      </BentoGrid>
+    </section>
+  )
 }
 
-function CTA() {
+function Pricing() {
+    return (
+        <section id="pricing" className="py-16 md:py-32">
+            <div className="mx-auto max-w-5xl px-6">
+                <div className="mx-auto max-w-2xl space-y-6 text-center">
+                    <h1 className="text-center text-4xl font-semibold lg:text-5xl">Pricing that doesn't suck</h1>
+                    <p className="text-muted-foreground mt-4 text-xl" >More features, less money.</p>
+                </div>
+
+                <div className="mt-8 grid gap-6 md:mt-20 md:grid-cols-5 md:gap-0">
+                    <div className="rounded-(--radius) flex flex-col justify-between space-y-8 border p-6 md:col-span-2 md:my-2 md:rounded-r-none md:border-r-0 lg:p-10">
+                        <div className="space-y-4">
+                            <div>
+                                <h2 className="font-medium">Free Forever</h2>
+                                <span className="my-3 block text-2xl font-semibold">$0 / mo</span>
+                                <p className="text-muted-foreground text-sm">No credit card required</p>
+                            </div>
+
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="w-full">
+                                <Link href="/builder">Start Building</Link>
+                            </Button>
+
+                            <hr className="border-dashed" />
+
+                            <ul className="list-outside space-y-3 text-sm">
+                                {[
+                                    'Unlimited forms', 
+                                    '1,000 responses/month', 
+                                    'All 6 question types',
+                                    'Multi-step forms',
+                                    'Notion-style builder',
+                                    'Public form sharing'
+                                ].map((item, index) => (
+                                    <li
+                                        key={index}
+                                        className="flex items-center gap-2">
+                                        <Check className="size-3" />
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="dark:bg-muted rounded-(--radius) border p-6 shadow-lg shadow-gray-950/5 md:col-span-3 lg:p-10 dark:[--color-muted:var(--color-zinc-900)]">
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <div className="space-y-4">
+                                <div>
+                                    <h2 className="font-medium">Pro</h2>
+                                    <span className="my-3 block text-2xl font-semibold">$12 / mo</span>
+                                    <p className="text-muted-foreground text-sm">Coming soon</p>
+                                </div>
+
+                                <Button
+                                    asChild
+                                    className="w-full"
+                                    disabled>
+                                    <Link href="">Notify Me</Link>
+                                </Button>
+                            </div>
+
+                            <div>
+                                <div className="text-sm font-medium">Everything in free plus:</div>
+
+                                <ul className="mt-4 list-outside space-y-3 text-sm">
+                                    {[
+                                        '10,000 responses/month',
+                                        'Remove FastForm branding', 
+                                        'Response analytics dashboard',
+                                        'Export responses to CSV',
+                                        'Custom form domains',
+                                        'Team collaboration (5 users)',
+                                        'Email notifications',
+                                        'Priority support'
+                                    ].map((item, index) => (
+                                        <li
+                                            key={index}
+                                            className="flex items-center gap-2">
+                                            <Check className="size-3" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-12 text-center">
+                    <p className="text-sm text-gray-600 mb-4">
+                        <strong>Compare to competitors:</strong> Typeform charges $25/mo for 100 responses. JotForm charges $24/mo for 1,000 responses.
+                    </p>
+                    <p className="text-xs text-gray-500">
+                        We're shipping fast and keeping prices low. No venture capital bullshit, just honest pricing.
+                    </p>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+function CTA(){
   return (
-    <div className="py-24">
-      <div className="max-w-2xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-semibold text-black mb-4">
-          Ready to ditch Google Forms?
-        </h2>
-        <p className="text-gray-600 mb-8">
-          Free forever. Unlimited forms, up to 100 responses per month. 
-          No credit card required.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-        <GradientButton variant="variant">Get Started</GradientButton>
-          <Button variant="outline" className="border-gray-300 px-8 py-6">
-            View pricing
-          </Button>
+    <CTASection
+      badge={{
+        text: "Ready to ditch Google Forms?"
+      }}
+      withGlow={true}
+      title="Start building forms that don't suck"
+      description="Join thousands who've already upgraded from clunky form builders. Free forever, no credit card required."
+      action={{
+        text: "Build Your First Form",
+        href: "/builder",
+        variant: "default"
+      }}
+    />
+  )
+}
+
+function Footer() {
+  return (
+    <footer className="mt-32">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+          {/* Left side - Brand */}
+          <div className="flex flex-col gap-3">
+            <div className="text-lg font-semibold text-gray-900">FastForm</div>
+            <p className="text-sm text-gray-600 max-w-sm">
+              Built by <a href="https://twitter.com/e3he0" className="text-gray-900 hover:text-gray-700 font-medium">@e3he0</a> because form builders suck
+            </p>
+          </div>
+          
+          {/* Right side - Links */}
+          <div className="flex gap-8 text-sm">
+            <a href="https://github.com/alvinliju/fast-from" className="text-gray-600 hover:text-gray-900">
+              GitHub
+            </a>
+            <a href="https://twitter.com/e3he0" className="text-gray-600 hover:text-gray-900">
+              Twitter
+            </a>
+            <a href="/builder" className="text-gray-600 hover:text-gray-900">
+              Build
+            </a>
+          </div>
         </div>
         
-        <p className="text-xs text-gray-500">
-          Join thousands who've already upgraded from Google Forms
-        </p>
+        {/* Bottom row - super minimal */}
+        <div className="mt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-6">
+            <span>© 2025 FastForm</span>
+            <span>MIT License - Do whatever you want with it</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <span>No tracking, no BS</span>
+            <span>Made with ☕ and frustration</span>
+          </div>
+        </div>
       </div>
-    </div>
+    </footer>
   );
 }
 
 function FastFormLanding() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen max-w-7xl mx-auto bg-white  space-y-16 px-8">
       <Hero />
+      <div className="w-full h-full">
+      <div className="mx-auto max-w-3xl space-y-6 text-center">
+                    <h1 className="text-center text-4xl font-semibold lg:text-5xl">Minimalistic, no-nonsense design</h1>
+                    <p className="text-muted-foreground mt-4 text-xl">be more productive, spend less time in your dashboard</p>
+                </div>
       <Features />
+      <Pricing />
+      </div>
       <CTA />
-      <FastFormFooter />
+
+      <Footer />
     </div>
   );
 }
+
 export default FastFormLanding;
 
