@@ -1,4 +1,20 @@
-{\n  \"name\": \"backend\",\n  \"version\": \"1.0.0\",\n  \"description\": \"\",\n  \"license\": \"ISC\",\n  \"author\": \"\",\n  \"type\": \"module\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"start\": \"node dist/index.js\",\n    \"dev\": \"nodemon --exec tsx src/index.ts\",\n    \"build\": \"tsc\",\n    \"postinstall\": \"npm run build\"\n  },
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "FastForm Backend API",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "dev": "nodemon --exec tsx src/index.ts",
+    "build": "tsc"
+  },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
     "@supabase/supabase-js": "^2.38.0",
