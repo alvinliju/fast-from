@@ -13,15 +13,15 @@ export default function Navigation() {
   const { isSignedIn } = useAuth();
   const pathname = usePathname();
 
-  // Don't render navbar on form pages
-  if (pathname.startsWith('/form/')) {
+  // Don't render navbar on form pages or builder pages
+  if (pathname.startsWith('/form/') || pathname.startsWith('/builder')) {
     return null;
   }
 
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
+    <nav className="w-full bg-white border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex justify-between items-center h-14">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-lg font-medium text-black hover:text-gray-800 transition-colors">

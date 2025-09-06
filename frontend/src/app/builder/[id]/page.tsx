@@ -34,6 +34,7 @@ export default function FormEditPage({
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { id } = use(params);
+  const [title, setTitle] = useState("Untitled Form");
 
   function structureToBlock(formData) {
     console.log("Parsing structure:", formData);
@@ -41,6 +42,7 @@ export default function FormEditPage({
 
     //ad title of the page first
     if (formData?.title) {
+      setTitle(formData.title);
       blocks.push({
         id: `form-title-${Date.now()}`,
         type: "formTitle",
@@ -124,7 +126,7 @@ export default function FormEditPage({
     <FormBuilder
       formId={id}
       initialContent={content}
-      formMetadata={{ title: "Dummy content" }}
+      formMetadata={{ title: title }}
     ></FormBuilder>
   );
 }

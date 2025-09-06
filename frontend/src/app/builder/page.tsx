@@ -801,16 +801,42 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
   };
 
   return (
-    <div className="h-full w-full flex flex-col">
-      <div className="w-full h-full flex flex-col">
-        <div className="border-b border-gray-200 w-full flex-none"></div>
-        <div className="flex flex-row justify-between items-center px-14 py-8">
-          <div>stupidforms</div>
-          <div className="flex flex-row gap-2">
-            <Button onClick={() => saveForm()}>
-              <Download /> Save
-            </Button>
-            <Button
+    <div className="h-screen w-full flex flex-col bg-white">
+      {/* Tally.so style header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b ">
+        {/* Left side - Back button and form info */}
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => window.history.back()}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            ← Back
+          </Button>
+          <div className="flex items-center gap-2">
+            <div className="text-sm font-medium text-gray-900">
+              {title || "Untitled form"}
+            </div>
+            <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              Draft
+            </div>
+          </div>
+        </div>
+
+        {/* Right side - Actions */}
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => saveForm()}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            Save
+          </Button>
+          
+          <Button
+            size="sm"
             onClick={() =>
               toast("Form URL copied to clipboard!", {
                 description: "Share your form with others",
@@ -820,30 +846,31 @@ export default function FormBuilder({ formId, initialContent, formMetadata }: {
                 },
               })
             }
-            >
-              Share
-            </Button>
-
-          </div>
+            className="bg-black hover:bg-gray-800 text-white"
+          >
+            Share
+          </Button>
         </div>
       </div>
 
-      {/* Make the editor take full remaining height */}
-      <div className="w-full h-screen not-first:flex-1">
-        <BlockNoteView
-          editor={editor}
-          slashMenu={false}
-          theme="light"
-          className="h-full max-w-3xl mx-auto"
-        >
-          <SuggestionMenuController
-            triggerCharacter="/"
-            getItems={async (query) =>
-              //@ts-ignore
-              filterSuggestionItems(getCustomSlashMenuItems(editor), query)
-            }
-          />
-        </BlockNoteView>
+      {/* Editor - Full height minus header */}
+      <div className="flex-1 overflow-hidden bg-white">
+        <div className="h-full max-w-2xl mx-auto bg-white ">
+          <BlockNoteView
+            editor={editor}
+            slashMenu={false}
+            theme="light"
+            className="h-full px-8 py-8"
+          >
+            <SuggestionMenuController
+              triggerCharacter="/"
+              getItems={async (query) =>
+                //@ts-ignore
+                filterSuggestionItems(getCustomSlashMenuItems(editor), query)
+              }
+            />
+          </BlockNoteView>
+        </div>
       </div>
     </div>
   );
