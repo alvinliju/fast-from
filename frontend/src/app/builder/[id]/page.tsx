@@ -90,7 +90,7 @@ export default function FormEditPage({
         const token = await getToken();
         console.log("Got token, making request...");
 
-        const response = await fetch(`http://localhost:3001/api/forms/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

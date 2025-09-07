@@ -135,7 +135,7 @@ export default function FormContainer({formId}:{formId:string}) {
   const fetchForms = async (formIdAsString: string) => {
     try {
       console.log("formId as string",formIdAsString)
-      const response = await fetch(`http://localhost:3001/api/forms/${formIdAsString}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms/${formIdAsString}`);
       console.log("response from server",response)
       if (response.ok) {
         const formData = await response.json();
@@ -188,7 +188,7 @@ export default function FormContainer({formId}:{formId:string}) {
   // Fix the form submission in FormContainer.tsx
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/responses/${formId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/responses/${formId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

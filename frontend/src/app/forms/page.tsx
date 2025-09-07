@@ -42,7 +42,7 @@ export default function FormList() {
   const fetchForms = async () => {
     try {
       const token = await getToken();
-      const response = await fetch('http://localhost:3001/api/forms', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

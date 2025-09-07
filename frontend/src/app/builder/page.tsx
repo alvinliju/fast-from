@@ -742,7 +742,7 @@ function FormBuilder({
       let response;
       if (formId) {
         // Update existing form
-        response = await fetch(`http://localhost:3001/api/forms/${formId}`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms/${formId}`, {
           method: "PUT",
           body: JSON.stringify(formData),
           headers: {
@@ -752,7 +752,7 @@ function FormBuilder({
         });
       } else {
         // Create new form
-        response = await fetch("http://localhost:3001/api/forms", {
+        response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms`, {
           method: "POST",
           body: JSON.stringify(formData),
           headers: {

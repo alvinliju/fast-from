@@ -68,8 +68,8 @@ export default function SubmissionPage({params}: {params: Promise<{id: string}>}
       
       // Fetch both form structure and responses
       const [formResponse, responsesResponse] = await Promise.all([
-        fetch(`http://localhost:3001/api/forms/${formId}`),
-        fetch(`http://localhost:3001/api/responses/${formId}`)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/forms/${formId}`),
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/responses/${formId}`)
       ])
       
       const formData = await formResponse.json()
