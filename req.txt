@@ -1,0 +1,54 @@
+- add upload file component
+- builder preview
+- add publish/unpublish toggle
+- setting page
+- form list view(make it DHH style)
+
+//good to haves
+- Add embed code generation
+- Add success message customization
+- Test & fix bugs
+- Ship MVP
+
+
+//api structure
+/api/forms
+  GET / - List forms
+  POST / - Create form
+  PUT /:id - Update form
+  DELETE /:id - Delete form
+
+/api/forms/:id/responses
+  GET / - List responses
+  GET /csv - Download CSV
+  POST / - Submit response
+
+/api/forms/:id/settings
+  GET / - Get settings
+  PUT / - Update settings
+
+
+DHH style userflow 
+1. Create Form:
+    Click "New Form"
+    Add questions with slash commands
+    Add page breaks if needed
+    Save & preview
+
+2.Manage Form:
+    Toggle publish status
+    Copy share link
+    Configure settings
+    View responses
+
+3.Collect Responses:
+    Share public link
+    Embed on website
+    Get email notifications
+    Download CSV
+
+4.Analyze Results:
+    View in table format
+    Export as needed
+    Check completion rate
+    Monitor submissions

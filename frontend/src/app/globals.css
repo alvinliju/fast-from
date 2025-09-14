@@ -503,11 +503,22 @@
   display: none;
 }
 
+
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  /* Use system font stack */
+  :root {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  h1 {
+    @apply text-[32px] leading-[1.2] font-bold text-gray-900 mb-6;
+  }
+
+  h2 {
+    @apply text-[24px] leading-[1.3] font-semibold text-gray-900 mb-4;
+  }
+
+  p {
+    @apply text-[16px] leading-[1.5] text-gray-700;
   }
 }
