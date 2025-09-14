@@ -3,6 +3,7 @@
 - add publish/unpublish toggle
 - setting page
 - form list view(make it DHH style)
+- llm for data filtering, summarization
 
 //good to haves
 - Add embed code generation
