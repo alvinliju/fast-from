@@ -5,7 +5,7 @@ import {
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/navigation/Navigation'
+import {Header} from '@/components/landing/header'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,7 +32,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <div className=''>
-           
+            <Header />
           </div>
 
           <main >{children}</main>

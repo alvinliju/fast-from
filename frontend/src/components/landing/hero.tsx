@@ -30,20 +30,19 @@ function TextRotate({ texts }: { texts: string[] }) {
 
 export function Hero() {
   return (
-    <section className="w-full h-screen overflow-hidden md:overflow-visible flex flex-col items-center justify-center relative bg-background">
-      <div className="flex flex-col justify-center items-center w-[250px] sm:w-[300px] md:w-[500px] lg:w-[700px] z-50 pointer-events-auto">
+    <section className="w-full min-h-[80vh] md:min-h-[85vh] flex flex-col items-center justify-center relative bg-background px-4">
+      <div className="max-w-[90vw] md:max-w-[700px] mx-auto">
         <motion.h1
-          className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-center w-full justify-center items-center flex-col flex whitespace-pre leading-tight font-black tracking-tight space-y-1 md:space-y-4"
+          className="text-[2.5rem] md:text-7xl lg:text-8xl text-center flex flex-col font-black tracking-tight leading-[1.1] mb-6 md:mb-8"
           animate={{ opacity: 1, y: 0 }}
           initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2, ease: "easeOut", delay: 0.3 }}
         >
-          <span>Stop wrestling with </span>
+          <span className="mb-2 md:mb-4">Stop wrestling with</span>
           <LayoutGroup>
-            <motion.span layout className="flex whitespace-pre">
+            <motion.span layout className="flex flex-wrap justify-center gap-2">
               <motion.span
                 layout
-                className="flex whitespace-pre"
                 transition={{ type: "spring", damping: 30, stiffness: 400 }}
               >
                 forms.{" "}
@@ -63,59 +62,52 @@ export function Hero() {
             </motion.span>
           </LayoutGroup>
         </motion.h1>
+
         <motion.p
-          className="text-sm sm:text-lg md:text-xl lg:text-2xl text-center font-medium pt-4 sm:pt-8 md:pt-10 lg:pt-12 text-muted-foreground"
+          className="text-xl md:text-2xl text-center font-medium mb-8 md:mb-12 text-muted-foreground"
           animate={{ opacity: 1, y: 0 }}
           initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2, ease: "easeOut", delay: 0.5 }}
         >
-          The opinionated form builder that works like <span className=" px-2 text-yellow-500 font-bold">Notion</span>.
-          <br />
+          The opinionated form builder that works like{" "}
+          <span className="text-yellow-500 font-bold">Notion</span>.
+          <br className="hidden md:block" />
           No more Google Forms frustration.
         </motion.p>
 
-        <div className="flex flex-row justify-center space-x-4 items-center mt-10 sm:mt-16 md:mt-20 lg:mt-20 text-xs">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center">
           <motion.button
-            className="w-32 sm:w-36 md:w-40 lg:w-44 sm:text-base md:text-lg lg:text-xl font-medium tracking-tight text-background bg-foreground px-3 py-1.5 sm:px-4 sm:py-2 md:px-4 md:py-2 lg:px-5 lg:py-2.5 rounded-lg md:rounded-xl z-20 shadow-2xl whitespace-nowrap cursor-pointer"
+            className="w-full md:w-auto bg-foreground text-background px-6 py-3 rounded-lg text-lg font-medium whitespace-nowrap"
             animate={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
             transition={{
               duration: 0.2,
               ease: "easeOut",
               delay: 0.7,
-              scale: {
-                duration: 0.2,
-              },
             }}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{
-              scale: 1.05,
-              transition: { type: "spring", damping: 30, stiffness: 400 },
-            }}
+            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.02 }}
           >
-            <Link href="#features">
-              See features <span className="font-serif ml-1">→</span>
+            <Link href="#features" className="flex items-center justify-center">
+              See features <span className="ml-2">→</span>
             </Link>
           </motion.button>
+
           <motion.button
-            className="w-32 sm:w-36 md:w-40 lg:w-44 sm:text-base md:text-lg lg:text-xl font-medium tracking-tight text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 sm:px-4 sm:py-2 md:px-4 md:py-2 lg:px-5 lg:py-2.5 rounded-lg md:rounded-xl z-20 shadow-2xl whitespace-nowrap cursor-pointer"
+            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg font-medium whitespace-nowrap"
             animate={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 20 }}
             transition={{
               duration: 0.2,
               ease: "easeOut",
               delay: 0.7,
-              scale: {
-                duration: 0.2,
-              },
             }}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{
-              scale: 1.05,
-              transition: { type: "spring", damping: 30, stiffness: 400 },
-            }}
+            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.02 }}
           >
-            <Link href="#pricing" >Start building</Link>
+            <Link href="#pricing" className="flex items-center justify-center">
+              Start building
+            </Link>
           </motion.button>
         </div>
       </div>

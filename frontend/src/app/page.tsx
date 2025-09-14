@@ -7,7 +7,6 @@ import { Header } from "@/components/landing/header"
 export default function Landing() {
   return (
     <div className="min-h-screen bg-white antialiased">
-      <Header />
       <Hero />
       <FeaturesSection />
       <PricingSection />

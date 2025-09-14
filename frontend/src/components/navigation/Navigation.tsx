@@ -6,38 +6,18 @@ import { useAuth, SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/n
 import { Menu, X } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import Dashboard from "@/app/dashboard/page"
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const { isLoaded, isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth()
   const pathname = usePathname()
+
+  // DEBUG - remove this after fixing
+  console.log('Navigation render - isSignedIn:', isSignedIn, 'pathname:', pathname)
 
   // Don't render navbar on form pages or builder pages
   if (pathname.startsWith('/form/') || pathname.startsWith('/builder')) {
     return null
-  }
-
-  if(isSignedIn) {
-    return (
-      <Dashboard/>
-    )
-  }
-
-  // Show nothing while loading auth state
-  if (!isLoaded) {
-    return (
-      <header className="bg-white border-b border-gray-100">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="flex h-20 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-gray-900">
-                FastForm
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-    )
   }
 
   return (
