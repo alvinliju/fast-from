@@ -28,7 +28,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       title,
       description: description || '',
       content: content,
-      is_public: isPublic || false,
+      is_public: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };

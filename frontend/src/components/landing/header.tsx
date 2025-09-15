@@ -33,21 +33,21 @@ export function Header() {
           </Link>
 
           {/* Main Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 font-bold text-black">
+          <nav className="hidden md:flex items-center space-x-6">
             <SignedIn>
               {/* Signed-in: Minimal, focused navigation */}
               <div className="flex items-center space-x-6">
                 <Link 
                   href="/forms" 
-                  className="text-md hover:text-black"
+                  className="text-md text-black hover:text-black"
                 >
-                  Forms
+                  My Forms
                 </Link>
                 <Link 
                   href="/builder" 
-                  className="text-md hover:text-black"
+                  className="text-md text-black hover:text-black"
                 >
-                  Create
+                  Create Form
                 </Link>
                 <div className="h-4 w-px bg-gray-200" />
                 <UserButton 
