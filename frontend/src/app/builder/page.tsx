@@ -16,7 +16,7 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { DefaultReactSuggestionItem } from "@blocknote/react";
 import {
-  getDefaultReactSlashMenuItems,
+  // getDefaultReactSlashMenuItems,
   useCreateBlockNote,
 } from "@blocknote/react";
 import { createReactBlockSpec } from "@blocknote/react";
@@ -532,12 +532,11 @@ const mySchema = BlockNoteSchema.create({
   },
 });
 
-// SLASH MENU ITEMS
+// SLASH MENU ITEMS - Clean version with only form-specific items
 const getCustomSlashMenuItems = (
   editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => [
-  ...getDefaultReactSlashMenuItems(editor),
-
+  // Form Structure
   {
     title: "Form Title",
     onItemClick: () =>
@@ -546,14 +545,12 @@ const getCustomSlashMenuItems = (
     group: "Form Structure",
     icon: <Type size={18} />,
   },
-
-  // Page Controls
   {
     title: "Page Break",
     onItemClick: () =>
       insertOrUpdateBlock(editor, { type: "pageBreak" } as any),
     aliases: ["page", "break"],
-    group: "Page Controls",
+    group: "Form Structure",
     icon: <Divide size={18} />,
   },
 
@@ -587,6 +584,8 @@ const getCustomSlashMenuItems = (
     group: "Basic Questions",
     icon: <Hash size={18} />,
   },
+
+  // Advanced Questions
   {
     title: "Multiple Choice",
     onItemClick: () =>
@@ -695,9 +694,27 @@ function FormBuilder({
     schema: mySchema,
     initialContent: initialContent || [
       {
-        type: "paragraph",
-        content:
-          "Build your form below. Use / to add questions and page breaks.",
+        type: "formTitle",
+        props: {
+          title: "Untitled Form",
+        },
+        content: [],
+      },
+      {
+        type: "pageBreak",
+        content: [],
+      },
+      {
+        type: "shortText",
+        content: [],
+      },
+      {
+        type: "pageBreak",
+        content: [],
+      },
+      {
+        type: "shortText",
+        content: [],
       },
     ],
   });
@@ -886,7 +903,7 @@ function FormBuilder({
             editor={editor as any}
             slashMenu={false}
             theme="light"
-            className="min-h-full px-8 py-8" // Changed from h-full to min-h-full
+            className="min-h-screen px-8 py-8" // Changed from h-full to min-h-full
           >
             <SuggestionMenuController
               triggerCharacter="/"

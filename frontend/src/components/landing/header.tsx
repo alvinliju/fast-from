@@ -11,6 +11,10 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
+  if(pathname.startsWith('/form/') || pathname.startsWith('/builder')) {
+    return null
+  }
+
   // Prevent scroll when menu is open
   useEffect(() => {
     if (isOpen) {

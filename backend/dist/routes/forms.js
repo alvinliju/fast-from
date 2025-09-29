@@ -12,7 +12,7 @@ router.post('/', requireAuth, async (req, res) => {
             title,
             description: description || '',
             content: content,
-            is_public: isPublic || false,
+            is_public: false,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
