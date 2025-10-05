@@ -3,6 +3,7 @@ import { FeaturesSection } from "@/components/landing/features"
 import { PricingSection } from "@/components/landing/pricing"
 import { Footer } from "@/components/landing/footer"
 import { Header } from "@/components/landing/header"
+import { CTA } from "@/components/landing/cta"
 
 export default function Landing() {
   return (
@@ -10,6 +11,7 @@ export default function Landing() {
       <Hero />
       <FeaturesSection />
       <PricingSection />
+      <CTA />
       <Footer />
     </div>
   )
