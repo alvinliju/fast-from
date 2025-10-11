@@ -1,0 +1,12 @@
+.env
+/node_modules
+/dist
+/build
+/coverage
+/logs
+/temp
+/uploads
+/public
+/views
+/config
+/database
