@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
-
+import { useEffect } from "react";
+import { useRouter } from 'next/navigation'
 
 
 import {
@@ -669,10 +670,6 @@ const parseFormByPages = (editor: any) => {
   };
 };
 
-const exportFormv2 = (editor: any) => {
-  const pages = parseFormByPages(editor);
-  console.log("Form Pages:", pages);
-};
 
 function FormBuilder({
   formId,
@@ -685,10 +682,16 @@ function FormBuilder({
 }) {
   const [isPreview, setIsPreview] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [title, setTitle] = useState<string>(
-    formMetadata?.title || "Form Title"
-  );
+  const title = formMetadata?.title
+
   const { getToken } = useAuth();
+  //use router for routing
+  const router = useRouter()
+
+  //call the saveForm so users dont have to manually hit save to save a form when they create  a new form
+  useEffect(() => {
+    saveForm();
+  }, []);
 
   const editor = useCreateBlockNote({
     schema: mySchema,
@@ -719,29 +722,6 @@ function FormBuilder({
     ],
   });
 
-  const saveFormv0 = async () => {
-    try {
-      const token = await getToken();
-      const pages = parseFormByPages(editor);
-      const formData = {
-        title: title,
-        content: pages,
-      };
-      console.log(formData);
-      const response = await fetch("/api/forms", {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      console.log("Form saved successfully:", data);
-    } catch (error) {
-      console.error("Error saving form:", error);
-    }
-  };
 
   const saveForm = async () => {
     try {
@@ -785,22 +765,19 @@ function FormBuilder({
 
       const data = await response.json();
       console.log("Form saved successfully:", data);
-      alert("Form saved successfully!");
+
 
       // If this was a new form, redirect to edit page
       if (!formId && data.id) {
-        window.location.href = `/builder/${data.id}`;
+        router.push(`/builder/${data.id}`)
       }
     } catch (error) {
       console.error("Error saving form:", error);
-      alert("Error saving form. Check console for details.");
+
     }
   };
 
-  const exportForm = () => {
-    const pages = parseFormByPages(editor);
-    console.log("Form Pages:", pages);
-  };
+ 
 
   if (isPreview) {
     const pages = parseFormByPages(editor);
@@ -859,7 +836,7 @@ function FormBuilder({
           </Button>
           <div className="flex items-center gap-2">
             <div className="text-sm font-medium text-gray-900">
-              {title || "Untitled form"}
+              {title}
             </div>
             <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
               Draft
@@ -918,7 +895,6 @@ function FormBuilder({
     </div>
   );
 }
-
 import dynamic from "next/dynamic";
 
 const FormBuilderClient = dynamic(() => Promise.resolve(FormBuilder), {
@@ -926,3 +902,4 @@ const FormBuilderClient = dynamic(() => Promise.resolve(FormBuilder), {
 });
 
 export default FormBuilderClient;
+

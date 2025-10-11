@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const plans = [
   {
@@ -65,12 +66,14 @@ export function PricingSection() {
                     )}
                   </div>
 
-                  <Button
-                    size="lg"
-                    className="w-full text-base font-bold py-3 h-auto bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    {plan.cta}
-                  </Button>
+                  <Link href="/login">
+                    <Button
+                      size="lg"
+                      className="w-full text-base font-bold py-3 h-auto bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      {plan.cta}
+                    </Button>
+                  </Link>
                 </div>
               </div>
             ))}
