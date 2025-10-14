@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useAuth, SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { usePathname } from "next/navigation"
@@ -15,7 +14,6 @@ export function Header() {
     return null
   }
 
-  // Prevent scroll when menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -28,66 +26,61 @@ export function Header() {
   }, [isOpen])
 
   return (
-    <header className="bg-background border-b border-border">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+    <header className="bg-white border-b border-[#e5e5e5] py-5">
+      <div className="container mx-auto px-6 lg:px-10">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-xl font-bold text-foreground tracking-tight">
-            FastForm
+          <Link href="/" className="text-2xl font-bold text-[#d97706]">
+            CalmForms
           </Link>
 
-          {/* Main Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
             <SignedIn>
-              {/* Signed-in: Minimal, focused navigation */}
-              <div className="flex items-center space-x-6">
-                <Link 
-                  href="/forms" 
-                  className="text-md text-black hover:text-black"
-                >
-                  My Forms
-                </Link>
-                <Link 
-                  href="/builder" 
-                  className="text-md text-black hover:text-black"
-                >
-                  Create Form
-                </Link>
-                <div className="h-4 w-px bg-gray-200" />
-                <UserButton 
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8"
-                    }
-                  }}
-                  afterSignOutUrl="/"
-                />
-              </div>
+              <Link 
+                href="/forms" 
+                className="text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] transition-colors"
+              >
+                My Forms
+              </Link>
+              <Link 
+                href="/builder" 
+                className="text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] transition-colors"
+              >
+                Create Form
+              </Link>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8"
+                  }
+                }}
+                afterSignOutUrl="/"
+              />
             </SignedIn>
 
             <SignedOut>
-              {/* Signed-out: Marketing navigation */}
               <Link 
                 href="#features" 
-                className="text-sm text-gray-600 hover:text-black"
+                className="text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] transition-colors"
               >
                 Features
               </Link>
               <Link 
                 href="#pricing" 
-                className="text-sm text-gray-600 hover:text-black"
+                className="text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] transition-colors"
               >
                 Pricing
               </Link>
               <SignInButton mode="modal">
-                <button className="text-sm text-gray-600 hover:text-black">
+                <button className="text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] transition-colors">
                   Sign in
                 </button>
               </SignInButton>
               <SignInButton mode="modal">
-                <Button className="bg-black hover:bg-gray-900 text-white text-sm px-4 py-2 rounded">
-                  Start building
-                </Button>
+                <button className="bg-[#d97706] hover:bg-[#b45309] text-white px-6 py-3 rounded-lg text-[15px] font-semibold transition-all hover:-translate-y-0.5">
+                  Get Started Free
+                </button>
               </SignInButton>
             </SignedOut>
           </nav>
@@ -103,61 +96,61 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden py-4">
+          <div className="md:hidden pt-6 pb-4 border-t border-[#e5e5e5] mt-4">
             <SignedIn>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Link 
                   href="/forms"
-                  className="block text-sm text-gray-600 hover:text-black py-2"
+                  className="block text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] py-2"
                   onClick={() => setIsOpen(false)}
                 >
-                  my forms
+                  My Forms
                 </Link>
                 <Link 
                   href="/builder"
-                  className="block text-sm text-gray-600 hover:text-black py-2"
+                  className="block text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] py-2"
                   onClick={() => setIsOpen(false)}
                 >
-                  create form
+                  Create Form
                 </Link>
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t border-[#e5e5e5]">
                   <UserButton afterSignOutUrl="/" />
                 </div>
               </div>
             </SignedIn>
 
             <SignedOut>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Link 
                   href="#features"
-                  className="block text-sm text-gray-600 hover:text-black py-2"
+                  className="block text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Features
                 </Link>
                 <Link 
                   href="#pricing"
-                  className="block text-sm text-gray-600 hover:text-black py-2"
+                  className="block text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Pricing
                 </Link>
-                <div className="pt-4 border-t space-y-3">
+                <div className="pt-4 border-t border-[#e5e5e5] space-y-3">
                   <SignInButton mode="modal">
                     <button 
-                      className="block w-full text-left text-sm text-gray-600 hover:text-black py-2"
+                      className="block w-full text-left text-[15px] font-medium text-gray-600 hover:text-[#1a1a1a] py-2"
                       onClick={() => setIsOpen(false)}
                     >
                       Sign in
                     </button>
                   </SignInButton>
                   <SignInButton mode="modal">
-                    <Button 
-                      className="w-full bg-black hover:bg-gray-900 text-white text-sm"
+                    <button 
+                      className="w-full bg-[#d97706] hover:bg-[#b45309] text-white px-6 py-3 rounded-lg text-[15px] font-semibold"
                       onClick={() => setIsOpen(false)}
                     >
-                      Start building
-                    </Button>
+                      Get Started Free
+                    </button>
                   </SignInButton>
                 </div>
               </div>

@@ -243,6 +243,70 @@
   height: 100% !important;
 }
 
+/* side men */
+.bn-side-menu {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+}
+
+.bn-button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bn-button:hover {
+  background: #f3f4f6;
+}
+
+/* Drag handle on hover */
+.bn-block-outer:hover .bn-drag-handle {
+  opacity: 1;
+}
+
+.bn-drag-handle {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* Add to globals.css */
+/* Fix BlockNote formatting toolbar alignment */
+.bn-formatting-toolbar {
+  position: absolute !important;
+  z-index: 1000 !important;
+  transform: translateY(-100%) !important;
+  margin-top: -8px !important;
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Ensure proper positioning relative to block */
+.bn-block-content {
+  position: relative !important;
+}
+
+/* Fix the floating menu alignment */
+.bn-formatting-toolbar-container {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Left align the toolbar */
+.bn-formatting-toolbar {
+  left: 0 !important;
+  right: auto !important;
+}
+
 /* Add these specific rules for BlockNote dotted borders */
 .bn-block {
   outline: none !important;
@@ -280,6 +344,24 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* CalmForms Brand Colors */
+  --color-brand-amber: oklch(0.75 0.15 65); /* amber-500 equivalent */
+  --color-brand-amber-dark: oklch(0.65 0.15 55); /* amber-600 */
+  --color-brand-orange: oklch(0.70 0.18 45); /* orange-600 */
+  --color-brand-amber-light: oklch(0.95 0.05 65); /* amber-50 */
+  
+  /* Semantic colors aligned with CalmForms */
+  --color-focus-ring: oklch(0.75 0.15 65); /* amber ring */
+  --color-success: oklch(0.60 0.12 150); /* emerald-500 */
+  
+  /* Override primary to use amber theme */
+  --color-primary: oklch(0.75 0.15 65);
+  --color-primary-foreground: oklch(1 0 0);
+  
+  /* Shadows */
+  --shadow-brand: 0 10px 15px -3px oklch(0.75 0.15 65 / 0.1);
+  --shadow-brand-xl: 0 20px 25px -5px oklch(0.75 0.15 65 / 0.15);
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

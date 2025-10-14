@@ -15,7 +15,7 @@ import {
 } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
-import { DefaultReactSuggestionItem } from "@blocknote/react";
+import { DefaultReactSuggestionItem, DeleteButton, DragHandleButton, FormattingToolbar, FormattingToolbarController, SideMenuController, SideMenu } from "@blocknote/react";
 import {
   // getDefaultReactSlashMenuItems,
   useCreateBlockNote,
@@ -880,6 +880,7 @@ function FormBuilder({
             editor={editor as any}
             slashMenu={false}
             theme="light"
+            formattingToolbar={true}
             className="min-h-screen px-8 py-8" // Changed from h-full to min-h-full
           >
             <SuggestionMenuController
@@ -890,6 +891,7 @@ function FormBuilder({
               }
             />
           </BlockNoteView>
+          
         </div>
       </div>
     </div>
